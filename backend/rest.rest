@@ -1,0 +1,62 @@
+# Posts API
+
+## Add a New Post
+POST http://localhost:3000/post
+
+{
+  "title": "Sample Post Title",
+  "content": "Sample post content",
+  "owner": "user123"
+}
+
+## Get All Posts
+GET http://localhost:3000/post/data
+
+## Get Post by ID
+GET http://localhost:3000/post/{{post_id}}
+
+## Get Posts by Sender
+GET http://localhost:3000/post?sender=user123
+
+## Update a Post
+PUT http://localhost:3000/post/{{post_id}}
+
+{
+  "title": "Updated Post Title",
+  "content": "Updated post content"
+}
+
+## Delete a Post
+DELETE http://localhost:3000/post/{{post_id}}
+
+---
+
+# Comments API
+
+## Add a New Comment
+POST http://localhost:3000/comment
+
+{
+  "user": "commenter123",
+  "message": "This is a comment",
+  "postId": "{{post_id}}"
+}
+
+## Get All Comments
+GET http://localhost:3000/comment/data
+
+## Get Comment by ID
+GET http://localhost:3000/comment/{{comment_id}}
+
+## Get Comments by Post ID
+GET http://localhost:3000/comment?post_id={{post_id}}
+
+## Update a Comment
+PUT http://localhost:3000/comment/{{comment_id}}
+
+{
+  "message": "Updated comment content"
+}
+
+## Delete a Comment
+DELETE http://localhost:3000/comment/{{comment_id}}
