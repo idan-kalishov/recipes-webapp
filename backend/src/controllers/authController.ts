@@ -75,7 +75,7 @@ const login = async (req: Request, res: Response) => {
 
     const validPassword = await bcrypt.compare(
       req.body.password,
-      user.password
+      user.password as string
     );
 
     if (!validPassword) {
@@ -205,8 +205,45 @@ const refresh = async (req: Request, res: Response) => {
   }
 };
 
-type Payload = {
-  _id: string;
+const googleSignIn = async (req: Request, res: Response): Promise<void> => {
+  const { googleId, email } = req.body;
+
+  if (!googleId || !email) {
+    res.status(400).send("Missing Google ID or email");
+    return; // Exit the function after sending the response
+  }
+
+  try {
+    let user = await userModel.findOne({ googleId });
+
+    if (!user) {
+      // If no user exists with the given Google ID, create a new user
+      user = await userModel.create({
+        googleId,
+        email,
+      });
+    }
+
+    const tokens = generateToken(user._id.toString());
+    if (!tokens) {
+      res.status(500).send("Failed to generate tokens");
+      return;
+    }
+
+    if (!user.refreshToken) {
+      user.refreshToken = [];
+    }
+    user.refreshToken.push(tokens.refreshToken);
+    await user.save();
+
+    res.status(200).send({
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      _id: user._id,
+    });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 export default {
@@ -214,4 +251,5 @@ export default {
   login,
   refresh,
   logout,
+  googleSignIn,
 };
