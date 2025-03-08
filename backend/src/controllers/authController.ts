@@ -99,11 +99,9 @@ const login = async (req: Request, res: Response) => {
 
     user.refreshToken.push(tokens.refreshToken);
     await user.save();
-    res.status(200).send({
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      _id: user._id,
-    });
+    res.cookie("accessToken", tokens.accessToken, { httpOnly: true });
+    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
+    res.status(200).send({ message: "Login successful" });
   } catch (err) {
     res.status(400).send(err);
   }

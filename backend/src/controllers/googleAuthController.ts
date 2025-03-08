@@ -16,7 +16,6 @@ const generateTokens = (user: any) => {
 
 // Handler for Google OAuth callback
 export const googleLoginHandler = (req: Request, res: Response): void => {
-  console.log("in the handler");
   try {
     const user = req.user as any;
     if (!user) {

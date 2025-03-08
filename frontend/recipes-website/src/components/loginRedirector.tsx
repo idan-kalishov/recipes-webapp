@@ -12,8 +12,6 @@ const LoginRedirector = () => {
           method: "GET",
           credentials: "include",
         });
-        console.log(response);
-
         if (response.ok) {
           navigate("/home");
         } else {

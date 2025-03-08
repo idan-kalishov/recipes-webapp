@@ -1,4 +1,5 @@
 import axios from "axios";
+import apiClient from "./apiClient";
 
 // Base URL of your backend server
 const BASE_URL = "http://localhost:3000";
@@ -15,7 +16,7 @@ export interface Post {
 // Function to fetch all posts
 export const fetchAllPosts = async (): Promise<Post[]> => {
   try {
-    const response = await axios.get<Post[]>(`${BASE_URL}/posts`);
+    const response = await apiClient.get<Post[]>("/posts");
     return response.data;
   } catch (error) {
     console.error("Error fetching posts:", error);

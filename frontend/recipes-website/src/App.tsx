@@ -22,7 +22,7 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route path={ROUTES.HOME} element={<HomePage />} />
         </Route>
-        <Route path="*" element={<Navigate to={ROUTES.LOGIN} />} />
+        <Route path="*" element={<Navigate to={ROUTES.VERIFY_AUTH} />} />
       </Routes>
     </Router>
   );
