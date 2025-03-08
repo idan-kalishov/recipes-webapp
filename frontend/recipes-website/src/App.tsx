@@ -10,12 +10,14 @@ import ProtectedRoute from "./components/protectedRoutes";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import LoginRedirector from "./components/loginRedirector";
+import SignUpPage from "./pages/SignUpPage";
 
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+        <Route path={ROUTES.SIGNUP} element={<SignUpPage />} />
 
         <Route path="/verify-auth" element={<LoginRedirector />} />
 

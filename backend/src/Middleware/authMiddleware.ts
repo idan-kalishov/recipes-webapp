@@ -18,22 +18,30 @@ const authMiddleware = async (
     return res.status(401).send("Access Denied");
   }
 
-  if (!process.env.TOKEN_SECRET) {
-    return res.status(500).send("Server Error");
+  try {
+    if (!process.env.TOKEN_SECRET) {
+      return res.status(500).send("Server Error");
+    }
+
+    const decoded = jwt.verify(accessToken, process.env.TOKEN_SECRET) as {
+      _id: string;
+    };
+
+    const user = await userModel.findById(decoded._id);
+
+    if (!user) {
+      return res.status(401).send("Invalid Token");
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    if ((error as Error).name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Access token expired" });
+    }
+
+    return res.status(401).json({ message: "Invalid token" });
   }
-
-  const decoded = jwt.verify(accessToken, process.env.TOKEN_SECRET) as {
-    _id: string;
-  };
-
-  const user = await userModel.findById(decoded._id);
-
-  if (!user) {
-    return res.status(401).send("Invalid Token");
-  }
-
-  req.user = user;
-  next();
 };
 
 export default asyncMiddleware(authMiddleware);
