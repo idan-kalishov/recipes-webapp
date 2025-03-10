@@ -17,7 +17,7 @@ const initializePassport = () => {
             user = await userModel.create({
               googleId: profile.id,
               email: profile.emails?.[0]?.value,
-              name: profile.displayName,
+              userName: profile?.displayName,
             });
           }
           done(null, user);

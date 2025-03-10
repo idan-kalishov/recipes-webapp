@@ -4,10 +4,11 @@ import { IPost } from "./Post";
 export interface IUser {
   _id?: string;
   email: string;
-  password?: string; // Optional for Google accounts
+  password?: string;
+  userName?: string;
   refreshToken?: string[];
   post?: IPost;
-  googleId?: string; // New field for Google users
+  googleId?: string;
 }
 
 const userSchema = new Schema({
@@ -15,6 +16,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  userName: {
+    type: String,
+    required: false,
   },
   password: {
     type: String,

@@ -13,8 +13,6 @@ authRouter.post("/refresh", authController.refresh);
 
 authRouter.post("/logout", authController.logout);
 
-authRouter.post("/google-signin", authController.googleSignIn);
-
 /**
  * @swagger
  * /auth/google:

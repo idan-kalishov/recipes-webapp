@@ -16,6 +16,9 @@ import * as React from "react";
 import AppTheme from "../shared-theme/AppTheme";
 import { GoogleIcon } from "./CustomeIcons";
 import { ROUTES } from "../routes";
+import { Snackbar, Alert } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -64,26 +67,61 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState<
+    "success" | "error"
+  >("success");
+  const navigate = useNavigate();
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
+    if (!validateInputs()) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      const email = (event.target as HTMLFormElement).elements.namedItem(
+        "email"
+      ) as HTMLInputElement;
+      const password = (event.target as HTMLFormElement).elements.namedItem(
+        "password"
+      ) as HTMLInputElement;
+      const apiClient = axios.create({
+        baseURL: "http://localhost:3000",
+        withCredentials: true,
+      });
+      const response = await apiClient.post(
+        "http://localhost:3000/auth/login",
+        {
+          email: email.value,
+          password: password.value,
+        }
+      );
+
+      // Show success message
+      setSnackbarMessage("Login successful!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      navigate("/verify-auth");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setSnackbarMessage(
+          err.response?.data || "An error occurred during login."
+        );
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      } else {
+        setSnackbarMessage("An unexpected error occurred.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   const validateInputs = () => {
@@ -170,12 +208,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>
           </Box>
@@ -200,6 +233,20 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           </Box>
         </Card>
       </SignInContainer>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </AppTheme>
   );
 }

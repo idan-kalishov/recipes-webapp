@@ -16,6 +16,9 @@ import AppTheme from "../shared-theme/AppTheme";
 import { GoogleIcon } from "./CustomeIcons";
 import { ROUTES } from "../routes";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Snackbar, Alert } from "@mui/material";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -66,6 +69,12 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState<
+    "success" | "error"
+  >("success");
+  const navigate = useNavigate();
 
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement;
@@ -104,18 +113,56 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     return isValid;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (nameError || emailError || passwordError) {
-      event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!validateInputs()) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get("name"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      const email = (event.target as HTMLFormElement).elements.namedItem(
+        "email"
+      ) as HTMLInputElement;
+      const password = (event.target as HTMLFormElement).elements.namedItem(
+        "password"
+      ) as HTMLInputElement;
+      const name = (event.target as HTMLFormElement).elements.namedItem(
+        "name"
+      ) as HTMLInputElement;
+
+      const response = await axios.post("http://localhost:3000/auth/register", {
+        email: email.value,
+        password: password.value,
+        userName: name.value,
+      });
+
+      console.log("User registered:", response.data);
+      setSnackbarMessage("Registration successful!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      navigate("/login");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error("Axios Error:", err.response?.data || err.message);
+        setSnackbarMessage(
+          err.response?.data?.message ||
+            "An error occurred during registration."
+        );
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        console.log("finished here");
+      } else {
+        console.error("Unexpected Error:", err);
+        setSnackbarMessage("An unexpected error occurred.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      }
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -143,7 +190,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 required
                 fullWidth
                 id="name"
-                placeholder="Jon Snow"
+                placeholder="john doe"
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? "error" : "primary"}
@@ -180,12 +227,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 color={passwordError ? "error" : "primary"}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign up
             </Button>
           </Box>
@@ -202,6 +244,21 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           </Box>
         </Card>
       </SignUpContainer>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </AppTheme>
   );
 }

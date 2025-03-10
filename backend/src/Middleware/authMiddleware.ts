@@ -26,7 +26,6 @@ const authMiddleware = async (
     const decoded = jwt.verify(accessToken, process.env.TOKEN_SECRET) as {
       _id: string;
     };
-
     const user = await userModel.findById(decoded._id);
 
     if (!user) {
@@ -39,7 +38,6 @@ const authMiddleware = async (
     if ((error as Error).name === "TokenExpiredError") {
       return res.status(401).json({ message: "Access token expired" });
     }
-
     return res.status(401).json({ message: "Invalid token" });
   }
 };
