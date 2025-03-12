@@ -10,7 +10,9 @@ interface PostRequestBody {
 
 // Add a New Post
 const addPost = async (req: Request, res: Response): Promise<void> => {
-  const { title, content, owner, imageUrl } = req.body as PostRequestBody;
+  const { title, content, imageUrl } = req.body as PostRequestBody;
+
+  const owner = (req.user as any)._id;
 
   try {
     if (!title || !owner) {

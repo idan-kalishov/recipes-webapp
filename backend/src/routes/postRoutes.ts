@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import * as postController from '../controllers/postController';
+import authMiddleware from "../Middleware/authMiddleware";
 
 const postRouter = express.Router();
 
@@ -133,7 +134,7 @@ postRouter.get('/sender', (req: Request, res: Response) => postController.getPos
  *       500:
  *         description: Server error
  */
-postRouter.post('/', (req: Request, res: Response) => postController.addPost(req, res));
+postRouter.post('/', authMiddleware, (req: Request, res: Response) => postController.addPost(req, res));
 
 postRouter.put('/:post_id', (req: Request, res: Response) => postController.updatePost(req, res));
 
