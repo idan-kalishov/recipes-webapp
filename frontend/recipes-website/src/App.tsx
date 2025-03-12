@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import LoginRedirector from "./components/loginRedirector";
 import SignUpPage from "./pages/SignUpPage";
+import UserProfile from "./pages/UserProfile";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
 
         <Route element={<ProtectedRoute />}>
           <Route path={ROUTES.HOME} element={<HomePage />} />
+          <Route path={ROUTES.USER_PROFILE} element={<UserProfile />} />
         </Route>
         <Route path="*" element={<Navigate to={ROUTES.VERIFY_AUTH} />} />
       </Routes>
