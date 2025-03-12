@@ -5,11 +5,12 @@ interface PostRequestBody {
   title?: string;
   content?: string;
   owner?: string;
+  imageUrl?: string;
 }
 
 // Add a New Post
 const addPost = async (req: Request, res: Response): Promise<void> => {
-  const { title, content, owner } = req.body as PostRequestBody;
+  const { title, content, owner, imageUrl } = req.body as PostRequestBody;
 
   try {
     if (!title || !owner) {
@@ -17,7 +18,7 @@ const addPost = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const newPost = new Post({ title, content, owner });
+    const newPost = new Post({ title, content, owner, imageUrl });
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (error) {
@@ -58,7 +59,9 @@ const getPostsBySender = async (req: Request, res: Response): Promise<void> => {
 
   try {
     if (!sender) {
-      res.status(400).json({ error: "Sender ID is required in query parameter." });
+      res
+        .status(400)
+        .json({ error: "Sender ID is required in query parameter." });
       return;
     }
 
@@ -104,7 +107,9 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.status(200).json({ message: "Post deleted successfully.", deletedPost });
+    res
+      .status(200)
+      .json({ message: "Post deleted successfully.", deletedPost });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

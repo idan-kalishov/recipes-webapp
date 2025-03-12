@@ -4,12 +4,10 @@
     "module": "commonjs",
     "rootDir": "./",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types", "src/types"],
+    "types": ["express"]
   },
-  "include": [
-    "./*.ts"
-  , "src/index.ts"    ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["./*.ts", "src/index.ts", "src", "types"],
+  "exclude": ["node_modules"]
 }
