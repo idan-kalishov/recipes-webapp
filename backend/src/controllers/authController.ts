@@ -90,13 +90,9 @@ const generateToken = (userId: string): tTokens | null => {
 };
 
 const login = async (req: Request, res: Response) => {
-  console.log("go");
   try {
     const user = await userModel.findOne({ email: req.body.email });
-
-    console.log(user);
-
-    if (!user) {
+    if (!user || !user.password) {
       res.status(400).send("wrong username or password");
       return;
     }
@@ -106,9 +102,8 @@ const login = async (req: Request, res: Response) => {
       user.password as string
     );
 
-    console.log(validPassword);
-
     if (!validPassword) {
+      console.log("invalid password");
       res.status(400).send("wrong username or password");
       return;
     }
@@ -129,11 +124,9 @@ const login = async (req: Request, res: Response) => {
 
     user.refreshToken.push(tokens.refreshToken);
     await user.save();
-    console.log();
     res.cookie("accessToken", tokens.accessToken, { httpOnly: true });
     res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
     res.status(200).send({ message: "Login successful" });
-    console.log("got to send here");
   } catch (err) {
     res.status(400).send(err);
   }

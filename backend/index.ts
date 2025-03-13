@@ -11,6 +11,7 @@ import initializePassport from "./src/passport"; // Import the initializePasspor
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
 
 const app: Application = express();
 dotenv.config();
@@ -28,7 +29,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.use("/uploads", express.static(path.join(__dirname, "./src/uploads")));
 // Swagger configuration
 const options = {
   definition: {
