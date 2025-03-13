@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import userModel from "../models/User";
+import fs from "fs";
+import path from "path";
 
 // Get a user by ID
 const getUserById = async (req: Request, res: Response): Promise<void> => {
@@ -40,7 +42,13 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
     if (email) user.email = email;
 
     if (file) {
-      user.profilePicture = file.filename;
+      if (user.profilePicture) {
+        const oldFilePath = path.join(__dirname, "../", user.profilePicture);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
+      }
+      user.profilePicture = `uploads/${file.filename}`;
     }
 
     await user.save();

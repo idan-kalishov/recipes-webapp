@@ -16,6 +16,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "../Routing/routes";
 import AppTheme from "../shared-theme/AppTheme";
 import { GoogleIcon } from "./CustomeIcons";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, setUser } from "../store/appState";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -70,6 +72,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     "success" | "error"
   >("success");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -89,15 +92,13 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         baseURL: "http://localhost:3000",
         withCredentials: true,
       });
-      const response = await apiClient.post(
-        "http://localhost:3000/auth/login",
-        {
-          email: email.value,
-          password: password.value,
-        }
-      );
+      await apiClient.post("http://localhost:3000/auth/login", {
+        email: email.value,
+        password: password.value,
+      });
 
-      // Show success message
+      // const user = useSelector((state: RootState) => state.appState.user);
+      // console.log(user);
       setSnackbarMessage("Login successful!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -111,6 +112,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         setSnackbarOpen(true);
       } else {
         setSnackbarMessage("An unexpected error occurred.");
+        console.log(err);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
