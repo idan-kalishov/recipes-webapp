@@ -31,7 +31,7 @@ const userSchema = new Schema({
     type: [String],
     default: [],
   },
-  post: {
+  posts: {
     required: false,
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },

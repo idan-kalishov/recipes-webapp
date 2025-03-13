@@ -136,7 +136,7 @@ postRouter.get('/sender', (req: Request, res: Response) => postController.getPos
  */
 postRouter.post('/', authMiddleware, (req: Request, res: Response) => postController.addPost(req, res));
 
-postRouter.put('/:post_id', (req: Request, res: Response) => postController.updatePost(req, res));
+postRouter.put('/:post_id', authMiddleware, (req: Request, res: Response) => postController.updatePost(req, res));
 
 
 /**
@@ -164,6 +164,10 @@ postRouter.put('/:post_id', (req: Request, res: Response) => postController.upda
  *       500:
  *         description: Server error
  */
-postRouter.delete('/:post_id', (req: Request, res: Response) => postController.deletePost(req, res));
+postRouter.delete('/:post_id', authMiddleware,(req: Request, res: Response) => postController.deletePost(req, res));
+
+postRouter.post("/:id/like", authMiddleware, postController.likePost);
+
+postRouter.post("/:id/unlike", authMiddleware, postController.unlikePost);
 
 export default postRouter;
