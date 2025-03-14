@@ -6,7 +6,6 @@ import { Document } from "mongoose";
 
 const register = async (req: Request, res: Response): Promise<void> => {
   const { email, password, userName } = req.body;
-  console.log(email, password, userName);
 
   if (!email || !password || !userName) {
     res.status(400).json({ message: "Missing email, password, or username" });
@@ -82,7 +81,6 @@ const generateToken = (userId: string): tTokens | null => {
     process.env.TOKEN_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRES }
   );
-
   return {
     accessToken: accessToken,
     refreshToken: refreshToken,
@@ -103,7 +101,6 @@ const login = async (req: Request, res: Response) => {
     );
 
     if (!validPassword) {
-      console.log("invalid password");
       res.status(400).send("wrong username or password");
       return;
     }
@@ -148,59 +145,38 @@ type tIUser = Document<unknown, {}, IUser> &
   }> & {
     __v: number;
   };
-const verifyRefreshToken = (refreshToken: string | undefined) => {
-  return new Promise<tIUser>((resolve, reject) => {
-    //get refresh token from body
-    if (!refreshToken) {
-      reject("fail");
-      return;
-    }
-    //verify token
-    if (!process.env.TOKEN_SECRET) {
-      reject("fail");
-      return;
-    }
-    jwt.verify(
-      refreshToken,
-      process.env.TOKEN_SECRET,
-      async (err: any, payload: any) => {
-        if (err) {
-          reject("fail");
-          return;
-        }
-        //get the user id from token
-        const userId = payload._id;
-        try {
-          //get the user form the db
-          const user = await userModel.findById(userId);
-          if (!user) {
-            reject("fail");
-            return;
-          }
-          if (!user.refreshToken || !user.refreshToken.includes(refreshToken)) {
-            user.refreshToken = [];
-            await user.save();
-            reject("fail");
-            return;
-          }
-          const tokens = user.refreshToken!.filter(
-            (token) => token !== refreshToken
-          );
-          user.refreshToken = tokens;
+const verifyRefreshToken = async (refreshToken: string): Promise<tIUser> => {
+  if (!refreshToken) {
+    throw new Error("Refresh token is required");
+  }
 
-          resolve(user);
-        } catch (err) {
-          reject("fail");
-          return;
-        }
-      }
-    );
+  if (!process.env.TOKEN_SECRET) {
+    throw new Error("Server misconfiguration: TOKEN_SECRET is missing");
+  }
+
+  // Verify the refresh token
+  const payload = jwt.verify(refreshToken, process.env.TOKEN_SECRET) as {
+    _id: string;
+  };
+  const userId = payload._id;
+  const user = await userModel.findOne({
+    _id: userId,
+    refreshToken: refreshToken,
   });
+  if (!user) {
+    throw new Error("Invalid or revoked refresh token");
+  }
+
+  user.refreshToken = (user.refreshToken ?? []).filter(
+    (token) => token !== refreshToken
+  );
+
+  return user;
 };
 
 const logout = async (req: Request, res: Response) => {
   try {
-    const user = await verifyRefreshToken(req.body.refreshToken);
+    const user = await verifyRefreshToken(req.cookies.refreshToken);
     await user.save();
     res.status(200).send("success");
   } catch (err) {
@@ -208,32 +184,48 @@ const logout = async (req: Request, res: Response) => {
   }
 };
 
-const refresh = async (req: Request, res: Response) => {
+const refresh = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = await verifyRefreshToken(req.body.refreshToken);
-    if (!user) {
-      res.status(400).send("fail");
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      res.status(401).send("Refresh token missing");
       return;
     }
+
+    const user = await verifyRefreshToken(refreshToken);
+    if (!user) {
+      res.status(401).send("Invalid refresh token");
+      return;
+    }
+
     const tokens = generateToken(user._id);
 
     if (!tokens) {
-      res.status(500).send("Server Error");
+      res.status(500).send("Server error while generating tokens");
       return;
     }
-    if (!user.refreshToken) {
-      user.refreshToken = [];
+    const newRefreshTokens = [
+      ...(user.refreshToken ?? []),
+      tokens.refreshToken,
+    ];
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: user._id },
+      { refreshToken: newRefreshTokens },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      res.status(500).send("Failed to update user");
+      return;
     }
-    user.refreshToken.push(tokens.refreshToken);
-    await user.save();
-    res.status(200).send({
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      _id: user._id,
-    });
-    //send new token
+
+    res.cookie("accessToken", tokens.accessToken, { httpOnly: true });
+    res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
+    res.status(200).send("Tokens refreshed successfully");
   } catch (err) {
-    res.status(400).send("fail");
+    console.error("Error refreshing token:", err);
+    res.status(401).send("Invalid or expired refresh token");
   }
 };
 
