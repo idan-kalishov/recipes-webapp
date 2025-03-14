@@ -1,7 +1,8 @@
 import axios from "axios";
+import { SERVER_BASE_URL } from "../config";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:3000", // TODO REPLACE WITH COLMAN
+  baseURL: `${SERVER_BASE_URL}`, // TODO REPLACE WITH COLMAN
   withCredentials: true,
 });
 
@@ -14,7 +15,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await axios.post("http://localhost:3000/auth/refresh", null, {
+        await axios.post(`${SERVER_BASE_URL}/auth/refresh`, null, {
           withCredentials: true,
         });
         return apiClient(originalRequest);

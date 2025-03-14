@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import userModel, { IUser } from "../models/User";
 import fs from "fs";
 import path from "path";
+import Post from "../models/Post";
 
 // Get a user by ID
 const getUserById = async (req: Request, res: Response): Promise<void> => {
@@ -57,4 +58,5 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: error.message });
   }
 };
+
 export { getUserById, updateUser };
