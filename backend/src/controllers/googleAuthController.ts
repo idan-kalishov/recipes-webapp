@@ -21,6 +21,7 @@ export const googleLoginHandler = async (
 ): Promise<void> => {
   try {
     const user = req.user as any;
+    console.log(user);
     if (!user) {
       res.status(401).json({ message: "Authentication failed" });
       return;
@@ -40,7 +41,9 @@ export const googleLoginHandler = async (
 
     res.cookie("accessToken", tokens.accessToken, { httpOnly: true });
     res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
-    res.redirect("http://localhost:5173/verify-auth");
+    res.redirect(
+      `http://localhost:5173/verify-auth?userId=${user._id}&userName=${encodeURIComponent(user.userName)}&email=${encodeURIComponent(user.email)}&profilePicture=${encodeURIComponent(user.profilePicture || "")}`
+    );
   } catch (error) {
     console.error("Google Auth Error:", error);
     res.status(500).json({ message: "Internal server error" });

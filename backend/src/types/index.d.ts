@@ -1,13 +1,13 @@
-// import { IUser } from "../models/User";
+import { IUser } from "../models/User";
 
-// declare global {
-//   namespace Express {
-//     interface User extends IUser {}
+declare global {
+  namespace Express {
+    interface User extends IUser {}
 
-//     interface Request {
-//       user?: IUser;
-//     }
-//   }
-// }
+    interface Request {
+      user?: IUser;
+    }
+  }
+}
 
-// export {};
+export {};

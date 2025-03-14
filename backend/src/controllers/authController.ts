@@ -90,13 +90,9 @@ const generateToken = (userId: string): tTokens | null => {
 };
 
 const login = async (req: Request, res: Response) => {
-  console.log("go");
   try {
     const user = await userModel.findOne({ email: req.body.email });
-
-    console.log(user);
-
-    if (!user) {
+    if (!user || !user.password) {
       res.status(400).send("wrong username or password");
       return;
     }
@@ -106,9 +102,8 @@ const login = async (req: Request, res: Response) => {
       user.password as string
     );
 
-    console.log(validPassword);
-
     if (!validPassword) {
+      console.log("invalid password");
       res.status(400).send("wrong username or password");
       return;
     }
@@ -129,11 +124,18 @@ const login = async (req: Request, res: Response) => {
 
     user.refreshToken.push(tokens.refreshToken);
     await user.save();
-    console.log();
     res.cookie("accessToken", tokens.accessToken, { httpOnly: true });
     res.cookie("refreshToken", tokens.refreshToken, { httpOnly: true });
-    res.status(200).send({ message: "Login successful" });
-    console.log("got to send here");
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        email: user.email,
+        userName: user.userName,
+        profilePicture: user.profilePicture
+          ? `/uploads/${user.profilePicture}`
+          : null,
+      },
+    });
   } catch (err) {
     res.status(400).send(err);
   }
@@ -235,45 +237,27 @@ const refresh = async (req: Request, res: Response) => {
   }
 };
 
-const googleSignIn = async (req: Request, res: Response): Promise<void> => {
-  const { googleId, email, displayName } = req.body;
-
-  if (!googleId || !email) {
-    res.status(400).send("Missing Google ID or email");
-    return; // Exit the function after sending the response
-  }
-
+const userDetails = (req: Request, res: Response) => {
   try {
-    let user = await userModel.findOne({ googleId });
+    const user = req.user as IUser;
 
     if (!user) {
-      // If no user exists with the given Google ID, create a new user
-      user = await userModel.create({
-        googleId,
-        email,
-        userName: displayName || email,
+      res.status(401).json({ message: "User not authenticated" });
+    } else {
+      res.status(200).json({
+        user: {
+          _id: user._id,
+          email: user.email,
+          userName: user.userName,
+          profilePicture: user.profilePicture
+            ? `/uploads/${user.profilePicture}`
+            : null,
+        },
       });
     }
-
-    const tokens = generateToken(user._id.toString());
-    if (!tokens) {
-      res.status(500).send("Failed to generate tokens");
-      return;
-    }
-
-    if (!user.refreshToken) {
-      user.refreshToken = [];
-    }
-    user.refreshToken.push(tokens.refreshToken);
-    await user.save();
-
-    res.status(200).send({
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      _id: user._id,
-    });
-  } catch (err) {
-    res.status(500).send(err);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -282,5 +266,5 @@ export default {
   login,
   refresh,
   logout,
-  googleSignIn,
+  userDetails,
 };

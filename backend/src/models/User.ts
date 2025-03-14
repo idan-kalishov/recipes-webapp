@@ -7,6 +7,7 @@ export interface IUser {
   password?: string;
   userName?: string;
   refreshToken?: string[];
+  profilePicture?: string;
   post?: IPost;
   googleId?: string;
 }
@@ -30,6 +31,10 @@ const userSchema = new Schema({
   refreshToken: {
     type: [String],
     default: [],
+  },
+  profilePicture: {
+    type: String,
+    required: false,
   },
   posts: {
     required: false,

@@ -3,5 +3,6 @@ export const ROUTES = {
   HOME: "/home",
   LOGIN: "/login",
   SIGNUP: "/register",
-  ADD_RECIPE: "/add-recipe"
+  USER_PROFILE: "/user-profile",
+  ADD_RECIPE: "/add-recipe",
 };

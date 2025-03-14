@@ -4,6 +4,7 @@ import authController from "../controllers/authController";
 import passport from "passport";
 import { googleLoginHandler } from "../controllers/googleAuthController";
 import authMiddleware from "../Middleware/authMiddleware";
+import { IUser } from "../models/User";
 
 authRouter.post("/register", authController.register);
 
@@ -45,5 +46,7 @@ authRouter.get(
 authRouter.get("/verify", authMiddleware, (req, res) => {
   res.status(200).json({ message: "User is authenticated" });
 });
+
+authRouter.get("/me", authMiddleware, authController.userDetails);
 
 export default authRouter;

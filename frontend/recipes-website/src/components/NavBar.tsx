@@ -42,7 +42,7 @@ const NavBar: React.FC = () => {
             </a>
           </div>
         </div>
-        <a href="/get-started" className="hidden md:block">
+        <a href="/user-profile" className="hidden md:block">
           <PersonIcon sx={{ fontSize: "40px" }} />
         </a>
       </nav>

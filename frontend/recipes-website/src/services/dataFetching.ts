@@ -1,4 +1,3 @@
-import axios from "axios";
 import apiClient from "./apiClient";
 
 // Base URL of your backend server

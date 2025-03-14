@@ -1,24 +1,23 @@
+import { Alert, Snackbar } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
-import { Link } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import axios from "axios";
 import * as React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ROUTES } from "../Routing/routes";
 import AppTheme from "../shared-theme/AppTheme";
 import { GoogleIcon } from "./CustomeIcons";
-import { ROUTES } from "../Routing/routes";
-import { Snackbar, Alert } from "@mui/material";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, setUser } from "../store/appState";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -73,6 +72,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     "success" | "error"
   >("success");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -92,15 +92,13 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         baseURL: "http://localhost:3000",
         withCredentials: true,
       });
-      const response = await apiClient.post(
-        "http://localhost:3000/auth/login",
-        {
-          email: email.value,
-          password: password.value,
-        }
-      );
+      await apiClient.post("http://localhost:3000/auth/login", {
+        email: email.value,
+        password: password.value,
+      });
 
-      // Show success message
+      // const user = useSelector((state: RootState) => state.appState.user);
+      // console.log(user);
       setSnackbarMessage("Login successful!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -114,6 +112,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         setSnackbarOpen(true);
       } else {
         setSnackbarMessage("An unexpected error occurred.");
+        console.log(err);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
