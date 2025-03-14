@@ -19,6 +19,7 @@ apiClient.interceptors.response.use(
         });
         return apiClient(originalRequest);
       } catch (refreshError) {
+        console.error(refreshError);
         window.location.href = "/login";
       }
     }

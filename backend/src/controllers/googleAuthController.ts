@@ -21,7 +21,6 @@ export const googleLoginHandler = async (
 ): Promise<void> => {
   try {
     const user = req.user as any;
-    console.log(user);
     if (!user) {
       res.status(401).json({ message: "Authentication failed" });
       return;
