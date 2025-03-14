@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import userModel from "../models/User";
+import userModel, { IUser } from "../models/User";
 import fs from "fs";
 import path from "path";
 
@@ -23,8 +23,8 @@ const getUserById = async (req: Request, res: Response): Promise<void> => {
 // Update user details (including profile picture)
 const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?._id;
-    const { userName, email } = req.body;
+    const userId = (req.user as IUser)?._id;
+    const { userName } = req.body;
     const file = req.file;
 
     if (!userId) {
@@ -39,7 +39,6 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (userName) user.userName = userName;
-    if (email) user.email = email;
 
     if (file) {
       if (user.profilePicture) {
@@ -58,5 +57,4 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: error.message });
   }
 };
-
 export { getUserById, updateUser };

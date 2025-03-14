@@ -22,7 +22,7 @@ const UserProfile = () => {
       className="min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${userBackground})` }}
     >
-      <div className="flex flex-col pt-[10%] pl-[25%]">
+      <div className="flex flex-col pt-[8%] pl-[25%]">
         {/* <ProfilePicture profilePicture={user.profilePicture} /> */}
 
         <Tooltip

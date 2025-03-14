@@ -128,9 +128,7 @@ const login = async (req: Request, res: Response) => {
         _id: user._id,
         email: user.email,
         userName: user.userName,
-        profilePicture: user.profilePicture
-          ? `/uploads/${user.profilePicture}`
-          : null,
+        profilePicture: user.profilePicture ? `${user.profilePicture}` : null,
       },
     });
   } catch (err) {
@@ -241,9 +239,7 @@ const userDetails = (req: Request, res: Response) => {
           _id: user._id,
           email: user.email,
           userName: user.userName,
-          profilePicture: user.profilePicture
-            ? `/uploads/${user.profilePicture}`
-            : null,
+          profilePicture: user.profilePicture ? `${user.profilePicture}` : null,
         },
       });
     }
