@@ -4,9 +4,16 @@ import { Box, Grid, Typography } from "@mui/material";
 import apiClient from "../services/apiClient";
 import { RootState } from "../store/appState";
 import Post from "./Post";
+import { useNavigate } from "react-router-dom";
 
-const UserPosts = () => {
+interface UserPostsProps {
+  editMode: boolean;
+}
+
+const UserPosts = ({ editMode }: UserPostsProps) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const user = useSelector((state: RootState) => state.appState.user);
 
   useEffect(() => {
@@ -37,7 +44,7 @@ const UserPosts = () => {
   return (
     <div className="pt-[2%] w-[75%] flex flex-col items-center">
       <h2
-        style={{ fontFamily: "Bebas Neue, cursive" }}
+        style={{ fontFamily: "Great Vibes, cursive" }}
         className="text-2xl pl-[5%] font-bold mb-2"
       >
         My Posts
@@ -59,6 +66,13 @@ const UserPosts = () => {
                   }}
                   onShare={() => {
                     console.log("Share post:", post._id);
+                  }}
+                  isEditMode={editMode}
+                  onClick={() => {
+                    if (editMode) {
+                      console.log("here");
+                      navigate(`/add-recipe/${post._id}`);
+                    }
                   }}
                 />
               </div>

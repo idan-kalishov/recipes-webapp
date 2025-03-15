@@ -11,8 +11,8 @@ interface PostRequestBody {
 
 // Add a New Post
 const addPost = async (req: Request, res: Response): Promise<void> => {
-  const { title, content, imageUrl } = req.body as PostRequestBody;
-
+  const { title, content } = req.body;
+  const imageUrl = req.file ? `/uploads/${req.file.filename}` : null; // Handle file upload
   const owner = (req.user as any)._id;
 
   try {
@@ -23,11 +23,15 @@ const addPost = async (req: Request, res: Response): Promise<void> => {
 
     const newPost = new Post({ title, content, owner, imageUrl });
     const savedPost = await newPost.save();
+
+    // Add the post ID to the user's posts array
     await userModel.findByIdAndUpdate(owner, {
-      $push: { post: savedPost._id },
+      $push: { posts: savedPost._id },
     });
+
     res.status(201).json(savedPost);
   } catch (error) {
+    console.error("Error creating post:", error);
     res.status(500).json({ error: "Error creating post." });
   }
 };
@@ -97,9 +101,13 @@ const getPostsBySender = async (req: Request, res: Response): Promise<void> => {
 // Update a Post
 const updatePost = async (req: Request, res: Response): Promise<void> => {
   const postId = req.params.post_id;
-  const { title, content, owner, imageUrl } = req.body as PostRequestBody;
+  const { title, content, owner } = req.body as PostRequestBody;
 
   try {
+    const imageUrl = req.file
+      ? `/uploads/${req.file.filename}`
+      : req.body.imageUrl;
+
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
       { title, content, owner, imageUrl },
@@ -113,6 +121,7 @@ const updatePost = async (req: Request, res: Response): Promise<void> => {
 
     res.json(updatedPost);
   } catch (error) {
+    console.error("Error updating post:", error);
     res.status(500).json({ error: "Error updating post." });
   }
 };

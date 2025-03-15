@@ -39,6 +39,8 @@ interface PostProps {
   avatarLetter?: string;
   onFavorite?: () => void;
   onShare?: () => void;
+  isEditMode?: boolean;
+  onClick?: () => void;
 }
 
 const Post: React.FC<PostProps> = ({
@@ -49,15 +51,34 @@ const Post: React.FC<PostProps> = ({
   avatarLetter = "P",
   onFavorite,
   onShare,
+  isEditMode = false,
+  onClick,
 }) => {
   const [expanded, setExpanded] = React.useState(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setExpanded((prev) => !prev);
   };
-
+  console.log(image);
   return (
-    <Card sx={{ width: "100%", maxWidth: "100%", margin: "auto", mb: 2 }}>
+    <Card
+      sx={{
+        width: "100%",
+        maxWidth: "100%",
+        margin: "auto",
+        mb: 2,
+        cursor: isEditMode ? "pointer" : "default",
+        transition: "transform 0.2s, box-shadow 0.2s",
+        "&:hover": isEditMode
+          ? {
+              transform: "scale(1.02)",
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+            }
+          : {},
+      }}
+      onClick={isEditMode ? onClick : undefined}
+    >
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="post">
@@ -95,7 +116,10 @@ const Post: React.FC<PostProps> = ({
         </IconButton>
         <ExpandMore
           expand={expanded}
-          onClick={handleExpandClick}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleExpandClick(e);
+          }}
           aria-expanded={expanded}
           aria-label="show more"
         >

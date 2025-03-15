@@ -37,6 +37,16 @@ const appStateSlice = createSlice({
         state.posts[postIndex] = updatedPost;
       }
     },
+    updateUserPost: (state, action) => {
+      if (state.user) {
+        const { postId, updatedPost } = action.payload;
+
+        // Update the specific post in the user.posts array
+        state.user.posts = (state.user.posts ?? []).map((post) =>
+          post._id === postId ? updatedPost : post
+        );
+      }
+    },
     deletePost: (state, action) => {
       const postId = action.payload;
       state.posts = state.posts.filter((post) => post._id !== postId);
@@ -57,6 +67,7 @@ export const {
   setPosts,
   addPosts,
   updatePost,
+  updateUserPost,
   deletePost,
   setLastUpdateTime,
   updateUserPosts,

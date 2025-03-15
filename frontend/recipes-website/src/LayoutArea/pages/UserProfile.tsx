@@ -51,7 +51,7 @@ const UserProfile = () => {
           editMode={editMode}
           setEditMode={setEditMode}
         />
-        <UserPosts />
+        <UserPosts editMode={editMode} />
       </div>
     </div>
   );

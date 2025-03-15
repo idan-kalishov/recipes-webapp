@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
           <div className="hidden md:flex pl-[10%] space-x-6 flex-nowrap whitespace-nowrap">
             <button
               onClick={() => navigate("/home")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               Home 🏠
@@ -23,7 +23,7 @@ const NavBar: React.FC = () => {
 
             <button
               onClick={() => navigate("/add-recipe")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               New Recipe ➕
@@ -31,7 +31,7 @@ const NavBar: React.FC = () => {
 
             <button
               onClick={() => navigate("/recipe-generator")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-yellow-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-yellow-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               Generator ⚡
@@ -39,7 +39,7 @@ const NavBar: React.FC = () => {
 
             <button
               onClick={() => navigate("/liked-posts")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-red-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-red-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               Favorites ❤️
@@ -49,7 +49,7 @@ const NavBar: React.FC = () => {
 
         <button
           onClick={() => navigate("/user-profile")}
-          className="hidden md:block"
+          className="hidden md:block cursor-pointer"
         >
           <PersonIcon sx={{ fontSize: "40px" }} />
         </button>

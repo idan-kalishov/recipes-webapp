@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import * as postController from "../controllers/postController";
 import authMiddleware from "../Middleware/authMiddleware";
+import upload from "../utils/imageStorage";
 
 const postRouter = express.Router();
 
@@ -139,12 +140,18 @@ postRouter.get("/sender", (req: Request, res: Response) =>
  *       500:
  *         description: Server error
  */
-postRouter.post("/", authMiddleware, (req: Request, res: Response) =>
-  postController.addPost(req, res)
+postRouter.post(
+  "/",
+  authMiddleware,
+  upload.single("imageUrl"), // Handle single file upload
+  (req, res) => postController.addPost(req, res)
 );
 
-postRouter.put("/:post_id", authMiddleware, (req: Request, res: Response) =>
-  postController.updatePost(req, res)
+postRouter.put(
+  "/:post_id",
+  authMiddleware,
+  upload.single("imageUrl"),
+  (req, res) => postController.updatePost(req, res)
 );
 
 /**

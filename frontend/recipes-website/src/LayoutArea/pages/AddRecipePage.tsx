@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Box,
@@ -10,20 +10,31 @@ import {
 } from "@mui/material";
 import AppTheme from "../../shared-theme/AppTheme";
 import apiClient from "../../services/apiClient"; // axios instance מוגדר עם baseURL ו-withCredentials
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { readFileAsBase64 } from "../../utils/imageReader";
 import IconButton from "@mui/material/IconButton";
 import { Delete } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { addPosts, updateUserPosts } from "../../store/appState";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addPosts,
+  updateUserPosts,
+  updatePost,
+  updateUserPost,
+} from "../../store/appState";
+import { RootState } from "../../store/appState";
 
-const AddRecipePage: React.FC = () => {
+const AddRecipePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { postId } = useParams<{ postId?: string }>(); // Extract postId from URL
 
-  // states לטופס והודעות למשתמש
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  // Retrieve posts from the Redux store
+  const posts = useSelector((state: RootState) => state.appState.posts);
+  const post = postId ? posts.find((p) => p._id === postId) : null;
+
+  // States for form and snackbar
+  const [title, setTitle] = useState<string>(post?.title || "");
+  const [content, setContent] = useState<string>(post?.content || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>("");
@@ -32,17 +43,28 @@ const AddRecipePage: React.FC = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [imagePreview, setImagePreview] = useState<string>(
+    post?.imageUrl || ""
+  );
+
+  useEffect(() => {
+    if (post) {
+      setImagePreview(post.imageUrl);
+    }
+  }, [post]);
+
   const handleRemoveImage = () => {
     setImageFile(null);
+    setImagePreview("");
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
+      setImagePreview(URL.createObjectURL(e.target.files[0]));
     }
   };
 
-  // טיפול בהגשת הטופס
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -53,34 +75,60 @@ const AddRecipePage: React.FC = () => {
       return;
     }
 
-    if (!imageFile) {
-      setSnackbarMessage("You must upload a recipe photo!");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      return;
-    }
-
     setLoading(true);
 
     try {
-      let imageUrl = "";
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
 
+      // Append the image file if a new file is selected
       if (imageFile) {
-        imageUrl = await readFileAsBase64(imageFile);
+        formData.append("imageUrl", imageFile);
+      } else if (imagePreview) {
+        // If no new file is uploaded, send the existing image URL
+        formData.append("imageUrl", imagePreview);
       }
-      // הקוד לא שולח במפורש את מזהה המשתמש – השרת מזהה אותו מהעוגיות
-      const newPost = { title, content, imageUrl };
-      const response = await apiClient.post("/posts", newPost);
 
-      dispatch(addPosts([response.data]));
-      dispatch(updateUserPosts([response.data]));
-      setSnackbarMessage("Post created successfully!");
+      let response;
+
+      if (post) {
+        // Editing an existing post
+        response = await apiClient.put(`/posts/${post._id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        const updatedPostData = response.data;
+
+        dispatch(
+          updatePost({ postId: post._id, updatedPost: updatedPostData })
+        );
+        dispatch(
+          updateUserPost({ postId: post._id, updatedPost: updatedPostData })
+        );
+
+        setSnackbarMessage("Post updated successfully!");
+        navigate("/user-profile");
+      } else {
+        // Creating a new post
+        response = await apiClient.post("/posts", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log(response.data);
+
+        dispatch(addPosts([response.data]));
+        dispatch(updateUserPosts([response.data]));
+
+        setSnackbarMessage("Post created successfully!");
+      }
+
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
       navigate("/home");
     } catch (error) {
-      console.error("Error creating post:", error);
-      setSnackbarMessage("Failed to create post");
+      console.error("Error handling post:", error);
+      setSnackbarMessage(
+        post ? "Failed to update post" : "Failed to create post"
+      );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     } finally {
@@ -100,7 +148,7 @@ const AddRecipePage: React.FC = () => {
             component="h1"
             sx={{ mb: 2, textAlign: "center" }}
           >
-            Create New Post
+            {post ? "Edit Post" : "Create New Post"}
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -140,10 +188,10 @@ const AddRecipePage: React.FC = () => {
                 overflow: "hidden",
               }}
             >
-              {imageFile ? (
+              {imagePreview ? (
                 <>
                   <img
-                    src={URL.createObjectURL(imageFile)}
+                    src={imagePreview}
                     alt="Preview"
                     style={{
                       width: "100%",
@@ -194,7 +242,13 @@ const AddRecipePage: React.FC = () => {
               fullWidth
               disabled={loading}
             >
-              {loading ? "Creating..." : "Create Post"}
+              {loading
+                ? post
+                  ? "Updating..."
+                  : "Creating..."
+                : post
+                  ? "Update Post"
+                  : "Create Post"}
             </Button>
           </Box>
         </Card>
