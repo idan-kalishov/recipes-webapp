@@ -42,7 +42,12 @@ const appStateSlice = createSlice({
       state.posts = state.posts.filter((post) => post._id !== postId);
     },
     setLastUpdateTime: (state, action) => {
-      state.lastUpdateTime = action.payload; // Update the last fetch timestamp
+      state.lastUpdateTime = action.payload;
+    },
+    updateUserPosts: (state, action) => {
+      if (state.user) {
+        state.user.posts = [...(state.user.posts || []), ...action.payload];
+      }
     },
   },
 });
@@ -54,6 +59,7 @@ export const {
   updatePost,
   deletePost,
   setLastUpdateTime,
+  updateUserPosts,
 } = appStateSlice.actions;
 
 const persistConfig = {

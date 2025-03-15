@@ -7,6 +7,7 @@ import { RootState } from "../../store/appState";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import UserDetails from "../../components/UserDetails";
 import { UserModel } from "../../intefaces/User";
+import UserPosts from "../../components/UserPosts";
 const UserProfile = () => {
   const user: UserModel | null = useSelector(
     (state: RootState) => state.appState.user
@@ -19,12 +20,10 @@ const UserProfile = () => {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center"
+      className="h-screen bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: `url(${userBackground})` }}
     >
-      <div className="flex flex-col pt-[8%] pl-[25%]">
-        {/* <ProfilePicture profilePicture={user.profilePicture} /> */}
-
+      <div className="flex flex-col pt-[8%] pl-[19.5%]">
         <Tooltip
           title={editMode ? "Exit Edit Mode" : "Edit Profile"}
           placement="top"
@@ -52,6 +51,7 @@ const UserProfile = () => {
           editMode={editMode}
           setEditMode={setEditMode}
         />
+        <UserPosts />
       </div>
     </div>
   );

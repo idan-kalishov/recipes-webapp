@@ -83,7 +83,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
   console.log(newProfilePicPreview);
 
   return (
-    <div className="flex flex-col items-center md:flex-row md:items-start">
+    <div className="flex flex-col pl-[5%] items-center md:flex-row md:items-start">
       <div className="relative mb-6 md:mb-0">
         <img
           src={

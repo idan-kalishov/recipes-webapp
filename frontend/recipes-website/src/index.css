@@ -45,3 +45,22 @@
     @apply w-full bg-transparent py-2 sm:pr-10 pl-10 text-base text-gray-200 placeholder-light-200 outline-hidden;
   }
 }
+
+.scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: #eae0d5;
+  border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #a67c52, #8c6b48);
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #8c6b48, #75573a);
+}
