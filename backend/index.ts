@@ -12,6 +12,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import userRouter from "./src/routes/userRoutes";
 
 const app: Application = express();
 dotenv.config();
@@ -29,7 +30,7 @@ app.use(
     credentials: true,
   })
 );
-app.use("/uploads", express.static(path.join(__dirname, "./src/uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 // Swagger configuration
 const options = {
   definition: {
@@ -55,6 +56,7 @@ app.use(bodyParser.json());
 app.use("/comments", commentsRoutes);
 app.use("/posts", postRoutes);
 app.use("/auth", authRoutes);
+app.use("/user", userRouter);
 
 // MongoDB connection
 if (!process.env.DB_CONNECT) {
