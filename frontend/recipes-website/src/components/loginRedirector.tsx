@@ -34,11 +34,8 @@ const LoginRedirector = () => {
           }
         }
 
-        const response = await fetch("http://localhost:3000/auth/verify", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
+        const verifyResponse = await apiClient.get("/auth/verify");
+        if (verifyResponse.status === 200) {
           try {
             const response = await apiClient.get("/auth/me");
             dispatch(setUser(response.data.user));

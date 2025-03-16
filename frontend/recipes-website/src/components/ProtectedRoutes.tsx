@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import apiClient from "../services/apiClient";
 
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -7,12 +8,8 @@ const ProtectedRoute = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:3000/auth/verify", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (response.ok) {
+        const verifyResponse = await apiClient.get("/auth/verify");
+        if (verifyResponse.status === 200) {
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
