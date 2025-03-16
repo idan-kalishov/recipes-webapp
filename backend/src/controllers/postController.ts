@@ -149,8 +149,7 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
 // Like a post
 const likePost = async (req: Request, res: Response): Promise<void> => {
   const postId = req.params.id;
-  const userId = (req.user as any)._id; // auth middleware should attach the user to req
-
+  const userId = (req.user as any)._id;
   if (!userId) {
     res.status(401).send("User not authenticated");
     return;
