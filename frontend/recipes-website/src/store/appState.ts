@@ -8,11 +8,13 @@ import { UserModel } from "../intefaces/User";
 interface AppState {
   user: UserModel | null;
   posts: PostModel[];
+  lastUpdateTime: string | null;
 }
 
 const initialState: AppState = {
   user: null,
   posts: [],
+  lastUpdateTime: null,
 };
 
 const appStateSlice = createSlice({
@@ -23,10 +25,10 @@ const appStateSlice = createSlice({
       state.user = action.payload;
     },
     setPosts: (state, action) => {
-      state.posts = action.payload;
+      state.posts = action.payload; // Replace all posts
     },
-    addPost: (state, action) => {
-      state.posts.unshift(action.payload);
+    addPosts: (state, action) => {
+      state.posts = [...state.posts, ...action.payload]; // Append new posts
     },
     updatePost: (state, action) => {
       const { postId, updatedPost } = action.payload;
@@ -35,15 +37,41 @@ const appStateSlice = createSlice({
         state.posts[postIndex] = updatedPost;
       }
     },
+    updateUserPost: (state, action) => {
+      if (state.user) {
+        const { postId, updatedPost } = action.payload;
+
+        // Update the specific post in the user.posts array
+        state.user.posts = (state.user.posts ?? []).map((post) =>
+          post._id === postId ? updatedPost : post
+        );
+      }
+    },
     deletePost: (state, action) => {
       const postId = action.payload;
       state.posts = state.posts.filter((post) => post._id !== postId);
     },
+    setLastUpdateTime: (state, action) => {
+      state.lastUpdateTime = action.payload;
+    },
+    updateUserPosts: (state, action) => {
+      if (state.user) {
+        state.user.posts = [...(state.user.posts || []), ...action.payload];
+      }
+    },
   },
 });
 
-export const { setUser, setPosts, addPost, updatePost, deletePost } =
-  appStateSlice.actions;
+export const {
+  setUser,
+  setPosts,
+  addPosts,
+  updatePost,
+  updateUserPost,
+  deletePost,
+  setLastUpdateTime,
+  updateUserPosts,
+} = appStateSlice.actions;
 
 const persistConfig = {
   key: "root",

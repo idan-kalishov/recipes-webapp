@@ -1,50 +1,45 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import PersonIcon from "@mui/icons-material/Person";
 
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   return (
     <div className="w-full z-10 fixed">
       <nav className="w-full bg-white pt-[10px] pr-[2%] pb-[3px] pl-[2%] h-[7vh] shadow-md flex justify-between items-center">
-        {/* Logo */}
         <div className="flex justify-between flex-row items-center">
           <img src={logo} alt="Logo" className="h-16 p-2" />
           <div className="hidden md:flex pl-[10%] space-x-6 flex-nowrap whitespace-nowrap">
-            {/* Home */}
             <button
-              onClick={() => navigate("/home")} // Use navigate for programmatic navigation
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors"
+              onClick={() => navigate("/home")}
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               Home 🏠
             </button>
 
-            {/* Add Recipe */}
             <button
               onClick={() => navigate("/add-recipe")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-blue-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               New Recipe ➕
             </button>
 
-            {/* Recipe Generator */}
             <button
               onClick={() => navigate("/recipe-generator")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-yellow-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-yellow-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               Generator ⚡
             </button>
 
-            {/* Liked Posts */}
             <button
               onClick={() => navigate("/liked-posts")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-red-500 transition-colors"
+              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-red-500 transition-colors cursor-pointer"
               style={{ fontFamily: "Bebas Neue, cursive" }}
             >
               Favorites ❤️
@@ -52,10 +47,9 @@ const NavBar: React.FC = () => {
           </div>
         </div>
 
-        {/* User Profile */}
         <button
           onClick={() => navigate("/user-profile")}
-          className="hidden md:block"
+          className="hidden md:block cursor-pointer"
         >
           <PersonIcon sx={{ fontSize: "40px" }} />
         </button>
