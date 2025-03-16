@@ -174,11 +174,12 @@ const verifyRefreshToken = async (refreshToken: string): Promise<tIUser> => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    const user = await verifyRefreshToken(req.cookies.refreshToken);
-    await user.save();
-    res.status(200).send("success");
-  } catch (err) {
-    res.status(400).send("fail");
+    res.clearCookie("accessToken", { httpOnly: true, secure: true });
+    res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+    res.status(200).json({ message: "Logged out successfully." });
+  } catch (error) {
+    console.error("Error logging out:", error);
+    res.status(500).json({ error: "Failed to log out." });
   }
 };
 
