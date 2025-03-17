@@ -1,12 +1,12 @@
-import {IconButton, Tooltip} from "@mui/material";
-import React, {useState} from "react";
-import {useSelector} from "react-redux";
-import userBackground from "../../assets/user-profile-background1.png";
-import {RootState} from "../../store/appState";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { IconButton, Tooltip } from "@mui/material";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import userBackground from "../../assets/user-profile-background1.png";
 import UserDetails from "../../components/UserDetails";
-import {UserModel} from "../../intefaces/User";
 import UserPosts from "../../components/UserPosts";
+import { UserModel } from "../../intefaces/User";
+import { RootState } from "../../store/appState";
 
 const UserProfile = () => {
   const user: UserModel | null = useSelector(
@@ -51,7 +51,7 @@ const UserProfile = () => {
           editMode={editMode}
           setEditMode={setEditMode}
         />
-        <UserPosts editMode={editMode} />
+        <UserPosts user={user} editMode={editMode} />
       </div>
     </div>
   );
