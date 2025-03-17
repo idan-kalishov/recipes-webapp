@@ -1,13 +1,13 @@
-import { IconButton, Tooltip } from "@mui/material";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import {IconButton, Tooltip} from "@mui/material";
+import React, {useState} from "react";
+import {useSelector} from "react-redux";
 import userBackground from "../../assets/user-profile-background1.png";
-import ProfilePicture from "../../components/ProfilePicture";
-import { RootState } from "../../store/appState";
+import {RootState} from "../../store/appState";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import UserDetails from "../../components/UserDetails";
-import { UserModel } from "../../intefaces/User";
+import {UserModel} from "../../intefaces/User";
 import UserPosts from "../../components/UserPosts";
+
 const UserProfile = () => {
   const user: UserModel | null = useSelector(
     (state: RootState) => state.appState.user

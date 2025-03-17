@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
 import { IComment } from '../models/commentsModel'; // Adjust the import path if needed
 import Post from '../models/Post'; // Adjust the import path if needed
-import CommentModel from '../models/commentsModel'; // Adjust the import path if needed
+import CommentModel from '../models/commentsModel';
+import {IUser} from "../models/User"; // Adjust the import path if needed
 
 // Get all comments
 const getAllComments = async (req: Request, res: Response): Promise<void> => {
     try {
         const comments = await CommentModel.find();
         res.status(200).json(comments);
+        return;
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -44,6 +46,8 @@ const getCommentsByPostId = async (req: Request, res: Response): Promise<void> =
 const createComment = async (req: Request, res: Response): Promise<void> => {
     try {
         const commentBody = req.body as IComment;
+        commentBody.user = (req.user as any)._id;
+
 
         // Create the comment
         const comment = await CommentModel.create(commentBody);

@@ -80,19 +80,18 @@ const UserDetails: React.FC<UserDetailsProps> = ({
     setSnackbarOpen(false);
   };
 
-  console.log(newProfilePicPreview);
 
   return (
     <div className="flex flex-col pl-[5%] items-center md:flex-row md:items-start">
       <div className="relative mb-6 md:mb-0">
         <img
+          alt="Profile"
           src={
             newProfilePicPreview ||
             (user?.profilePicture &&
               `${SERVER_BASE_URL ?? "http://localhost:3000"}/${user.profilePicture}`) ||
             defaultPic
           }
-          alt="Profile"
           className="w-80 h-80 z-10 rounded-full object-cover border-4 border-white shadow-lg"
         />
         {editMode && (
