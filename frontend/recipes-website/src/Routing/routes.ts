@@ -4,5 +4,6 @@ export const ROUTES = {
   LOGIN: "/login",
   SIGNUP: "/register",
   USER_PROFILE: "/user-profile",
+  RECIPE_GENERATOR: "/recipe-generator",
   ADD_RECIPE: "/add-recipe/:postId?",
 };

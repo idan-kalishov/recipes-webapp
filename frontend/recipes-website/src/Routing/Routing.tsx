@@ -8,6 +8,7 @@ import SignUpPage from "../LayoutArea/pages/SignUpPage";
 import { ROUTES } from "./routes";
 import UserProfile from "../LayoutArea/pages/UserProfile";
 import ProtectedRoute from "../components/ProtectedRoutes";
+import RecipeGenerator from "../LayoutArea/pages/RecipeGeneratorPage";
 
 const Routing = () => {
   return (
@@ -20,6 +21,7 @@ const Routing = () => {
         <Route path={ROUTES.ADD_RECIPE} element={<AddRecipePage />} />
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.USER_PROFILE} element={<UserProfile />} />
+        <Route path={ROUTES.RECIPE_GENERATOR} element={<RecipeGenerator />} />
       </Route>
       <Route path="*" element={<Navigate to={ROUTES.VERIFY_AUTH} />} />
     </Routes>
