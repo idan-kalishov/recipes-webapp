@@ -174,11 +174,12 @@ const verifyRefreshToken = async (refreshToken: string): Promise<tIUser> => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    const user = await verifyRefreshToken(req.cookies.refreshToken);
-    await user.save();
-    res.status(200).send("success");
-  } catch (err) {
-    res.status(400).send("fail");
+    res.clearCookie("accessToken", { httpOnly: true, secure: true });
+    res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+    res.status(200).json({ message: "Logged out successfully." });
+  } catch (error) {
+    console.error("Error logging out:", error);
+    res.status(500).json({ error: "Failed to log out." });
   }
 };
 
@@ -227,22 +228,35 @@ const refresh = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const userDetails = (req: Request, res: Response) => {
+const userDetails = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = req.user as IUser;
+    const userId = (req.user as IUser)._id;
+
+    if (!userId) {
+      res.status(401).json({ message: "User not authenticated" });
+      return;
+    }
+
+    // Fetch user details from the database
+    const user = await userModel.findById(userId).select({
+      email: 1,
+      userName: 1,
+      profilePicture: 1,
+    });
 
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
-    } else {
-      res.status(200).json({
-        user: {
-          _id: user._id,
-          email: user.email,
-          userName: user.userName,
-          profilePicture: user.profilePicture ? `${user.profilePicture}` : null,
-        },
-      });
+      res.status(404).json({ message: "User not found" });
+      return;
     }
+
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        email: user.email,
+        userName: user.userName,
+        profilePicture: user.profilePicture ? `${user.profilePicture}` : null,
+      },
+    });
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ message: "Server error" });

@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import userModel from "../models/User";
 import { Request, Response, NextFunction } from "express";
 
 const asyncMiddleware =
@@ -7,8 +6,12 @@ const asyncMiddleware =
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
+interface IUserRequest extends Request {
+  user?: { _id: string };
+}
+
 const authMiddleware = async (
-  req: Request,
+  req: IUserRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -23,16 +26,14 @@ const authMiddleware = async (
       return res.status(500).send("Server Error");
     }
 
+    // Verify the access token
     const decoded = jwt.verify(accessToken, process.env.TOKEN_SECRET) as {
       _id: string;
     };
-    const user = await userModel.findById(decoded._id);
 
-    if (!user) {
-      return res.status(401).send("Invalid Token");
-    }
+    // Attach only the user ID to the request
+    req.user = { _id: decoded._id };
 
-    req.user = user;
     next();
   } catch (error) {
     if ((error as Error).name === "TokenExpiredError") {

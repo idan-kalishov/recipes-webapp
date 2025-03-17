@@ -2,8 +2,8 @@ import mongoose, { Schema } from "mongoose";
 import { IPost } from "./Post";
 
 export interface IUser {
-  _id?: string;
-  email: string;
+  _id: string;
+  email?: string;
   password?: string;
   userName?: string;
   refreshToken?: string[];
