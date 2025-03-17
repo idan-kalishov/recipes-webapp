@@ -97,7 +97,6 @@ const getPostsBySender = async (req: Request, res: Response): Promise<void> => {
         }
 
         const posts = await Post.find({owner: sender})
-            .populate("comments")
             .populate({
                 path: "comments",
                 populate: {path: "user", select: "userName"}
@@ -231,10 +230,7 @@ const getUserPosts = async (req: Request, res: Response): Promise<void> => {
                 path: "comments",
                 populate: {path: "user", select: "userName"}
             })
-            .populate(
-                "owner",
-                "userName profilePicture"
-            )
+            .populate("owner", "userName")
             .populate("likes", "userName");
 
         if (!posts || posts.length === 0) {

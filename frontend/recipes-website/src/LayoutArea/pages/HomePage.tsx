@@ -55,9 +55,6 @@ const HomePage = () => {
                     currentUserId={user._id}
                     avatarLetter={post.owner?.userName.charAt(0).toUpperCase() || "p"}
                     refreshData={fetchPosts}
-                    onShare={() => {
-                      // Implement share functionality if needed
-                    }}
                   />
                 </Grid>
               );

@@ -23,7 +23,6 @@ interface PostProps {
     post: PostModel;
     avatarLetter?: string;
     currentUserId: string;
-    onShare?: () => void;
     isEditMode?: boolean;
     refreshData: () => void;
     onClick?: () => void;
@@ -33,7 +32,6 @@ const Post: React.FC<PostProps> = ({
                                        post,
                                        currentUserId,
                                        avatarLetter = "P",
-                                       onShare,
                                        isEditMode = false,
                                        onClick,
                                        refreshData
@@ -76,7 +74,6 @@ const Post: React.FC<PostProps> = ({
             await navigator.clipboard.writeText(postUrl);
             setSnackbarMessage("Link copied to clipboard!");
             setSnackbarOpen(true);
-            onShare();
         } catch (error) {
             setSnackbarMessage("Failed to copy link.");
             setSnackbarOpen(true);
@@ -134,7 +131,10 @@ const Post: React.FC<PostProps> = ({
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
     };
+
     const isLiked = post.likes.some(({_id}) => _id === currentUserId) || false;
+    console.log( post)
+    console.log( post + " " +   post.owner._id  +" " + currentUserId);
 
     return (
         <Card
@@ -193,10 +193,10 @@ const Post: React.FC<PostProps> = ({
                     <FavoriteIcon color={isLiked ? "error" : "inherit"}/>
                 </IconButton>
                 <Typography variant="body2">{post.likes.length}</Typography>
-                <IconButton aria-label="comments" onClick={handleCommentsToggle}>
+                <IconButton aria-label="comments" onClick={() => handleCommentsToggle}>
                     <ChatBubbleOutlineIcon/>
                 </IconButton>
-                <IconButton aria-label="share" onClick={handleShareClick(post._id)}>
+                <IconButton aria-label="share" onClick={() => handleShareClick(post._id)}>
                     <ShareIcon/>
                 </IconButton>
             </CardActions>
@@ -247,7 +247,7 @@ const Post: React.FC<PostProps> = ({
                             onChange={(e) => setNewComment(e.target.value)}
                             fullWidth
                         />
-                        <Button variant="contained" onClick={handleCommentSubmit}>
+                        <Button variant="contained" onClick={() => handleCommentSubmit}>
                             Post
                         </Button>
                     </Box>
