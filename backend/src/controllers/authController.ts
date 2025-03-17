@@ -227,22 +227,35 @@ const refresh = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const userDetails = (req: Request, res: Response) => {
+const userDetails = async (req: Request, res: Response): Promise<void> => {
   try {
-    const user = req.user as IUser;
+    const userId = (req.user as IUser)._id;
+
+    if (!userId) {
+      res.status(401).json({ message: "User not authenticated" });
+      return;
+    }
+
+    // Fetch user details from the database
+    const user = await userModel.findById(userId).select({
+      email: 1,
+      userName: 1,
+      profilePicture: 1,
+    });
 
     if (!user) {
-      res.status(401).json({ message: "User not authenticated" });
-    } else {
-      res.status(200).json({
-        user: {
-          _id: user._id,
-          email: user.email,
-          userName: user.userName,
-          profilePicture: user.profilePicture ? `${user.profilePicture}` : null,
-        },
-      });
+      res.status(404).json({ message: "User not found" });
+      return;
     }
+
+    res.status(200).json({
+      user: {
+        _id: user._id,
+        email: user.email,
+        userName: user.userName,
+        profilePicture: user.profilePicture ? `${user.profilePicture}` : null,
+      },
+    });
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ message: "Server error" });
