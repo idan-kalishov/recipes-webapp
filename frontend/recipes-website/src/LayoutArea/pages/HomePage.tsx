@@ -1,18 +1,24 @@
-import { Box, Grid, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {Box, Grid, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import Post from "../../components/Post";
-import { PostModel } from "../../intefaces/Pots";
-import apiClient from "../../services/apiClient";
-import { postService } from "../../services/PostService";
+import {PostModel} from "../../intefaces/Pots";
+import {postService} from "../../services/PostService";
+import {UserModel} from "../../intefaces/User";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/appState";
 
 const HomePage = () => {
   const [posts, setPosts] = useState<PostModel[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  // const { user } = useAuth();
+
+  const user: UserModel  = useSelector(
+      (state: RootState) => state.appState.user
+  );
 
   const fetchPosts = async () => {
     try {
       const posts = await postService.getAllPosts();
+      console.log(posts);
       setPosts(posts);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -21,21 +27,6 @@ const HomePage = () => {
     }
   };
 
-  const handleToggleFavorite = async (postId: string, liked: boolean) => {
-    try {
-      if (!liked) {
-        // Like the post
-        await apiClient.post(`/posts/${postId}/like`);
-      } else {
-        // Unlike the post
-        await apiClient.delete(`/posts/${postId}/like`);
-      }
-      // Refresh posts to update the likes count
-      fetchPosts();
-    } catch (error) {
-      console.error("Error toggling like:", error);
-    }
-  };
 
   useEffect(() => {
     fetchPosts();
@@ -57,18 +48,13 @@ const HomePage = () => {
         ) : (
           <Grid container spacing={2}>
             {posts.map((post) => {
-              const isLiked = true; //user && post.likes.some((id) => id === user._id);
               return (
                 <Grid item xs={12} sm={6} md={4} key={post._id}>
                   <Post
-                    title={post.title}
-                    image={post.imageUrl}
-                    content={post.content}
-                    method={post.content}
-                    avatarLetter={post.owner?.userName || "p"}
-                    onFavorite={() =>
-                      handleToggleFavorite(post._id, Boolean(isLiked))
-                    }
+                    post={post}
+                    currentUserId={user._id}
+                    avatarLetter={post.owner?.userName.charAt(0).toUpperCase() || "p"}
+                    refreshData={fetchPosts}
                     onShare={() => {
                       // Implement share functionality if needed
                     }}

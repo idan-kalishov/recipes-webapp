@@ -154,7 +154,7 @@ postRouter.put(
   (req, res) => postController.updatePost(req, res)
 );
 
-/**
+/**`
  * @swagger
  * posts/{id}:
  *   delete:
@@ -185,7 +185,7 @@ postRouter.delete("/:post_id", authMiddleware, (req: Request, res: Response) =>
 
 postRouter.post("/:id/like", authMiddleware, postController.likePost);
 
-postRouter.post("/:id/unlike", authMiddleware, postController.unlikePost);
+postRouter.delete("/:id/unlike", authMiddleware, postController.unlikePost);
 
 /**
  * @swagger
