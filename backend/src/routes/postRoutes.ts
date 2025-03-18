@@ -98,10 +98,6 @@ postRouter.get("/:post_id", (req: Request, res: Response) =>
   postController.getPostById(req, res)
 );
 
-postRouter.get("/sender", (req: Request, res: Response) =>
-  postController.getPostsBySender(req, res)
-);
-
 /**
  * @swagger
  * /posts:

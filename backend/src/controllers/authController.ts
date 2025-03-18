@@ -192,6 +192,7 @@ const refresh = async (req: Request, res: Response): Promise<void> => {
     }
 
     const user = await verifyRefreshToken(refreshToken);
+
     if (!user) {
       res.status(401).send("Invalid refresh token");
       return;

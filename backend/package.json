@@ -1,10 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon ./index.ts",
-    "start": "ts-node src/index.ts",
+    "dev": "nodemon ./src/index.ts",
     "test": "jest --runInBand",
     "testPost": "jest --detectOpenHandles --forceExit src/tests/posts.test.ts",
     "testAuth": "jest --detectOpenHandles --forceExit src/tests/auth.test.ts",

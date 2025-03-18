@@ -3,6 +3,17 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import initApp from '../index';
 import Post from '../models/Post';
+import jwt from "jsonwebtoken";
+import {createServer} from "../server";
+import dotenv from "dotenv";
+
+dotenv.config();
+const testUserId = "60c72b2f9b1e8a0012345678";
+const token = jwt.sign({ _id: testUserId }, process.env.TOKEN_SECRET || "testSecret", {
+  expiresIn: "1h",
+});
+
+const authCookie = `accessToken=${token}`;
 
 describe('Post Controller Tests', () => {
   let mockPostId: string = '';
@@ -10,7 +21,7 @@ describe('Post Controller Tests', () => {
   let app: Application;
 
   beforeAll(async () => {
-    app = await initApp();
+    app = await createServer();
   });
   
   afterAll(async () => {
@@ -25,7 +36,7 @@ describe('Post Controller Tests', () => {
     const post = await Post.create({
       title: 'Mock Post',
       content: 'This is a mock post.',
-      owner: 'User123',
+      owner: testUserId,
     });
     mockPostId = post._id as any;
   });
@@ -40,7 +51,9 @@ describe('Post Controller Tests', () => {
       content: 'Missing title and owner.'
     };
   
-    const response = await request(app).post('/posts').send(incompletePost);
+    const response = await request(app).post('/posts')
+        .set('Cookie', [authCookie])
+        .send(incompletePost);
   
     expect(response.status).toBe(400);
     expect(response.body.error).toContain("Title and owner are required.");
@@ -59,10 +72,12 @@ describe('Post Controller Tests', () => {
     const newPost = {
       title: 'New Post',
       content: 'This is a new post.',
-      owner: 'User456',
+      owner: testUserId,
     };
 
-    const response = await request(app).post('/posts').send(newPost);
+    const response = await request(app).post('/posts')
+        .set('Cookie', [authCookie])
+        .send(newPost);
 
     expect(response.status).toBe(201);
     expect(response.body.title).toBe(newPost.title);
@@ -81,7 +96,9 @@ describe('Post Controller Tests', () => {
     const nonExistingId = new mongoose.Types.ObjectId();
     const updatedData = { title: 'Updated', content: 'Updated content' };
   
-    const response = await request(app).put(`/posts/${nonExistingId}`).send(updatedData);
+    const response = await request(app).put(`/posts/${nonExistingId}`)
+        .set('Cookie', [authCookie])
+        .send(updatedData);
   
     expect(response.status).toBe(404);
     expect(response.body.error).toBe("Post not found.");
@@ -90,7 +107,7 @@ describe('Post Controller Tests', () => {
   test('DELETE /posts/:post_id - should handle deletion of non-existing post', async () => {
     const nonExistingId = new mongoose.Types.ObjectId();
   
-    const response = await request(app).delete(`/posts/${nonExistingId}`);
+    const response = await request(app).delete(`/posts/${nonExistingId}`).set('Cookie', [authCookie]);
   
     expect(response.status).toBe(404);
     expect(response.body.message).toBe("Post not found.");
@@ -102,22 +119,16 @@ describe('Post Controller Tests', () => {
     expect(response.status).toBe(200);
     expect(response.body._id).toBe(mockPostId.toString());
   });
-
-  test('GET /posts?sender=:sender - should fetch posts by sender', async () => {
-    const response = await request(app).get('/posts?sender=User123');
-
-    expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body[0].owner).toBe('User123');
-  });
-
+  
   test('PUT /posts/:post_id - should update a post', async () => {
     const updatedData = {
       title: 'Updated Post',
       content: 'This is an updated post.',
     };
 
-    const response = await request(app).put(`/posts/${mockPostId}`).send(updatedData);
+    const response = await request(app).put(`/posts/${mockPostId}`)
+        .set('Cookie', [authCookie])
+        .send(updatedData);
 
     expect(response.status).toBe(200);
     expect(response.body.title).toBe(updatedData.title);
@@ -125,7 +136,8 @@ describe('Post Controller Tests', () => {
   });
 
   test('DELETE /posts/:post_id - should delete a post', async () => {
-    const response = await request(app).delete(`/posts/${mockPostId}`);
+    const response = await request(app).delete(`/posts/${mockPostId}`)
+        .set('Cookie', [authCookie]);
 
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('Post deleted successfully.');

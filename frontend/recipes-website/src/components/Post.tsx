@@ -193,7 +193,7 @@ const Post: React.FC<PostProps> = ({
                     <FavoriteIcon color={isLiked ? "error" : "inherit"}/>
                 </IconButton>
                 <Typography variant="body2">{post.likes.length}</Typography>
-                <IconButton aria-label="comments" onClick={() => handleCommentsToggle}>
+                <IconButton aria-label="comments" onClick={handleCommentsToggle}>
                     <ChatBubbleOutlineIcon/>
                 </IconButton>
                 <IconButton aria-label="share" onClick={() => handleShareClick(post._id)}>
@@ -247,7 +247,7 @@ const Post: React.FC<PostProps> = ({
                             onChange={(e) => setNewComment(e.target.value)}
                             fullWidth
                         />
-                        <Button variant="contained" onClick={() => handleCommentSubmit}>
+                        <Button variant="contained" onClick={handleCommentSubmit}>
                             Post
                         </Button>
                     </Box>
