@@ -94,9 +94,6 @@ postRouter.get("/", (req: Request, res: Response) =>
  *       500:
  *         description: Server error
  */
-postRouter.get("/:post_id", (req: Request, res: Response) =>
-  postController.getPostById(req, res)
-);
 
 postRouter.get("/sender", (req: Request, res: Response) =>
   postController.getPostsBySender(req, res)
@@ -246,5 +243,54 @@ postRouter.delete("/:id/unlike", authMiddleware, postController.unlikePost);
  */
 
 postRouter.get("/user/:id", authMiddleware, postController.getUserPosts);
+
+/**
+ * @swagger
+ * /posts/paginate:
+ *   get:
+ *     summary: Get paginated posts
+ *     description: Retrieve a paginated list of posts with comments, owner, and likes populated.
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to fetch (default is 1).
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 6
+ *         description: The number of posts per page (default is 6).
+ *     responses:
+ *       200:
+ *         description: A paginated list of posts was successfully retrieved.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 posts:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Post'
+ *                 totalCount:
+ *                   type: integer
+ *                   description: Total number of posts available.
+ *       500:
+ *         description: An error occurred while fetching posts.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message.
+ */
+postRouter.get("/paginate", postController.getPaginatedPosts);
 
 export default postRouter;
