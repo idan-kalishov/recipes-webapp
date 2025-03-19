@@ -64,3 +64,28 @@
 .scroll-container::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(45deg, #8c6b48, #75573a);
 }
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #eae0d5;
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #a67c52, #8c6b48);
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #8c6b48, #75573a);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
