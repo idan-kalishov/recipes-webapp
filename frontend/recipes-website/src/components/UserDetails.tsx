@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { TextField, Button, IconButton, Snackbar, Alert } from "@mui/material";
-import defaultPic from "../assets/no-profile.png";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import apiClient from "../services/apiClient";
+import { Alert, Button, Snackbar, TextField } from "@mui/material";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/appState"; // Import the setUser action
+import defaultPic from "../assets/no-profile.png";
 import { SERVER_BASE_URL } from "../config";
+import apiClient from "../services/apiClient";
+import { setUser } from "../store/appState";
 
 interface UserDetailsProps {
   user: {
@@ -53,7 +53,6 @@ const UserDetails: React.FC<UserDetailsProps> = ({
         formData.append("profilePicture", newProfilePicFile);
 
       const response = await apiClient.put("/user/update-user", formData);
-      console.log(response.data.message);
 
       const updatedUser = {
         ...user,
