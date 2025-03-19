@@ -17,7 +17,7 @@ module.exports = {
     "/node_modules/",
     "/dist/", // If you compile your TS files to a dist folder
     "/tests/", // If you store test files outside of the src directory
-    "/index.ts",
+    "src/index.ts",
     "\\.d\\.ts$" // Ignore TypeScript declaration files
   ],
 };

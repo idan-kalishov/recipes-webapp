@@ -1,19 +1,7 @@
-// import express, { Application } from "express";
-// import dotenv from "dotenv";
-// dotenv.config();
-// import cors from "cors";
-// console.log("Google Client ID:", process.env.GOOGLE_CLIENT_ID); // Debug log
-// import mongoose from "mongoose";
-// import postRoutes from "./routes/postRoutes";
-// import commentsRouter from "./routes/commentsRoute";
-// import bodyParser from "body-parser";
-// import authRouter from "./routes/authRoutes";
-// import initializePassport from "./passport";
-// import passport from "passport";
-// import cookieParser from "cookie-parser";
+import { createServer } from "./server"; // adjust the path accordingly
 
-// const initApp = async (): Promise<Application> => {
-//   const app: Application = express();
+const app = createServer();
+const PORT = 3000;
 
 //   console.log("calling the init"); // Debug log
 

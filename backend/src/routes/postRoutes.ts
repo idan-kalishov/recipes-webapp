@@ -95,10 +95,6 @@ postRouter.get("/", (req: Request, res: Response) =>
  *         description: Server error
  */
 
-postRouter.get("/sender", (req: Request, res: Response) =>
-  postController.getPostsBySender(req, res)
-);
-
 /**
  * @swagger
  * /posts:
