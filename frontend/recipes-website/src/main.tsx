@@ -6,16 +6,13 @@ import { PersistGate } from "redux-persist/integration/react";
 import "./index.css";
 import { Layout } from "./LayoutArea/Layout";
 import store, { persistor } from "./store/appState";
-import { PollingProvider } from "./components/PollingProvider";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <PollingProvider>
-            <Layout />
-          </PollingProvider>
+          <Layout />
         </BrowserRouter>
       </PersistGate>
     </Provider>
