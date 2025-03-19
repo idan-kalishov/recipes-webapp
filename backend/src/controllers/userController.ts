@@ -54,7 +54,10 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
 
     await user.save();
 
-    res.status(200).json({ message: "User updated successfully" });
+    res.status(200).json({
+      message: "User updated successfully",
+      profilePicture: user.profilePicture,
+    });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
