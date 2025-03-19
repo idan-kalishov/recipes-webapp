@@ -7,8 +7,6 @@ export interface Recipe {
 }
 
 const API_KEY = import.meta.env.VITE_GOOGLE_AI_API_KEY as string;
-console.log(API_KEY);
-console.log(import.meta.env.VITE_SOME_KEY); // "123"
 
 export const getRecipe = async (
   ingredients: string[]

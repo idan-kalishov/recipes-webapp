@@ -207,6 +207,7 @@ const Post: React.FC<PostProps> = ({
         <IconButton aria-label="comments" onClick={handleCommentsToggle}>
           <ChatBubbleOutlineIcon />
         </IconButton>
+        <Typography variant="body2">{post.comments.length}</Typography>
         <IconButton
           aria-label="share"
           onClick={() => handleShareClick(post._id)}
