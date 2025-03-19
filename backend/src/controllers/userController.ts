@@ -1,26 +1,7 @@
 import { Request, Response } from "express";
-import userModel, { IUser } from "../models/User";
 import fs from "fs";
 import path from "path";
-import Post from "../models/Post";
-
-// Get a user by ID
-const getUserById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const userId = req.params.id;
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.status(200).json(user);
-    return;
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-};
+import userModel, { IUser } from "../models/User";
 
 // Update user details (including profile picture)
 const updateUser = async (req: Request, res: Response): Promise<void> => {
@@ -63,4 +44,4 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { getUserById, updateUser };
+export { updateUser };

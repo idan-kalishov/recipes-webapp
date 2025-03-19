@@ -5,8 +5,6 @@ import upload from "../utils/imageStorage";
 
 const postRouter = express.Router();
 
-// Define routes and associate them with the controller methods
-
 /**
  * @swagger
  * tags:
@@ -36,11 +34,28 @@ const postRouter = express.Router();
  *         owner:
  *           type: string
  *           description: The owner id of the post
+ *         imageUrl:
+ *           type: string
+ *           nullable: true
+ *           description: The URL of the image attached to the post (if any)
+ *         likes:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of user IDs who liked the post
+ *         comments:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of comment IDs associated with the post
  *       example:
  *         _id: 245234t234234r234r23f4
  *         title: My First Post
  *         content: This is the content of my first post.
- *         author: 324vt23r4tr234t245tbv45by
+ *         owner: 324vt23r4tr234t245tbv45by
+ *         imageUrl: /uploads/example.jpg
+ *         likes: []
+ *         comments: []
  */
 
 /**
@@ -69,34 +84,6 @@ postRouter.get("/", (req: Request, res: Response) =>
 
 /**
  * @swagger
- * /posts/{id}:
- *   get:
- *     summary: Get a post by ID
- *     description: Retrieve a single post by its ID
- *     tags:
- *       - Posts
- *     parameters:
- *       - in: path
- *         name: post_id
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the post
- *     responses:
- *       200:
- *         description: A single post
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Post'
- *       404:
- *         description: Post not found
- *       500:
- *         description: Server error
- */
-
-/**
- * @swagger
  * /posts:
  *   post:
  *     summary: Create a new post
@@ -108,7 +95,7 @@ postRouter.get("/", (req: Request, res: Response) =>
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -118,6 +105,10 @@ postRouter.get("/", (req: Request, res: Response) =>
  *               content:
  *                 type: string
  *                 description: The content of the post
+ *               imageUrl:
+ *                 type: string
+ *                 format: binary
+ *                 description: The image file to upload (optional)
  *             required:
  *               - title
  *               - content
@@ -140,6 +131,55 @@ postRouter.post(
   (req, res) => postController.addPost(req, res)
 );
 
+/**
+ * @swagger
+ * /posts/{post_id}:
+ *   put:
+ *     summary: Update a post
+ *     description: Update an existing post by its ID
+ *     tags:
+ *       - Posts
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: post_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the post to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The updated title of the post
+ *               content:
+ *                 type: string
+ *                 description: The updated content of the post
+ *               imageUrl:
+ *                 type: string
+ *                 format: binary
+ *                 description: The updated image file (optional)
+ *             required:
+ *               - title
+ *               - content
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
 postRouter.put(
   "/:post_id",
   authMiddleware,
@@ -147,9 +187,9 @@ postRouter.put(
   (req, res) => postController.updatePost(req, res)
 );
 
-/**`
+/**
  * @swagger
- * posts/{id}:
+ * /posts/{post_id}:
  *   delete:
  *     summary: Delete a post by ID
  *     description: Delete a single post by its ID
@@ -159,7 +199,7 @@ postRouter.put(
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: post_id
  *         schema:
  *           type: string
  *         required: true
@@ -176,8 +216,70 @@ postRouter.delete("/:post_id", authMiddleware, (req: Request, res: Response) =>
   postController.deletePost(req, res)
 );
 
+/**
+ * @swagger
+ * /posts/{id}/like:
+ *   post:
+ *     summary: Like a post
+ *     description: Add a like to a post by its ID
+ *     tags:
+ *       - Posts
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the post to like
+ *     responses:
+ *       200:
+ *         description: Post liked successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *       400:
+ *         description: Post already liked or invalid request
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
 postRouter.post("/:id/like", authMiddleware, postController.likePost);
 
+/**
+ * @swagger
+ * /posts/{id}/unlike:
+ *   delete:
+ *     summary: Unlike a post
+ *     description: Remove a like from a post by its ID
+ *     tags:
+ *       - Posts
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the post to unlike
+ *     responses:
+ *       200:
+ *         description: Post unliked successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *       400:
+ *         description: Post not liked yet or invalid request
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
 postRouter.delete("/:id/unlike", authMiddleware, postController.unlikePost);
 
 /**
@@ -203,41 +305,12 @@ postRouter.delete("/:id/unlike", authMiddleware, postController.unlikePost);
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     description: The unique identifier of the post
- *                   title:
- *                     type: string
- *                     description: The title of the post
- *                   content:
- *                     type: string
- *                     description: The content of the post
- *                   imageUrl:
- *                     type: string
- *                     description: The URL of the image attached to the post (if any)
- *                   method:
- *                     type: string
- *                     description: The method or instructions included in the post (if any)
- *                   owner:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         description: The unique identifier of the post owner
- *                       userName:
- *                         type: string
- *                         description: The username of the post owner
- *                       profilePicture:
- *                         type: string
- *                         description: The profile picture URL of the post owner
+ *                 $ref: '#/components/schemas/Post'
  *       404:
  *         description: No posts found for the specified user
  *       500:
  *         description: Server error
  */
-
 postRouter.get("/user/:id", authMiddleware, postController.getUserPosts);
 
 /**

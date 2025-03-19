@@ -86,55 +86,6 @@ const getPaginatedPosts = async (
   }
 };
 
-// Get a Post by ID
-const getPostById = async (req: Request, res: Response): Promise<void> => {
-  const postId = req.params.post_id;
-
-  try {
-    const post = await Post.findById(postId)
-      .populate("comments")
-      .populate({
-        path: "comments",
-        populate: { path: "user", select: "userName" },
-      })
-      .populate("owner", "userName")
-      .populate("likes", "userName");
-    if (!post) {
-      res.status(404).json({ error: "Post not found." });
-      return;
-    }
-
-    res.json(post);
-  } catch (error) {
-    res.status(500).json({ error: "Error fetching post." });
-  }
-};
-
-// Get Posts by Sender
-const getPostsBySender = async (req: Request, res: Response): Promise<void> => {
-  const sender = req.query.sender as string;
-
-  try {
-    if (!sender) {
-      res
-        .status(400)
-        .json({ error: "Sender ID is required in query parameter." });
-      return;
-    }
-
-    const posts = await Post.find({ owner: sender })
-      .populate({
-        path: "comments",
-        populate: { path: "user", select: "userName" },
-      })
-      .populate("owner", "userName")
-      .populate("likes", "userName");
-    res.json(posts);
-  } catch (error) {
-    res.status(500).json({ error: "Error fetching posts by sender." });
-  }
-};
-
 // Update a Post
 const updatePost = async (req: Request, res: Response): Promise<void> => {
   const postId = req.params.post_id;
@@ -273,8 +224,6 @@ const getUserPosts = async (req: Request, res: Response): Promise<void> => {
 export {
   addPost,
   getAllPosts,
-  getPostById,
-  getPostsBySender,
   getPaginatedPosts,
   updatePost,
   deletePost,

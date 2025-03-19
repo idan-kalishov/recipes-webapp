@@ -6,7 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types", "src/types"],
-    "types": ["express"]
+    "types": ["express", "jest"]
   },
   "include": ["./*.ts", "src/index.ts", "src", "types"],
   "exclude": ["node_modules"]
