@@ -1,11 +1,10 @@
-import { Box, Grid, Typography, Pagination } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {Box, Grid, Pagination, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import Post from "../../components/Post";
-import { postService } from "../../services/PostService";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/appState";
-import { UserModel } from "../../intefaces/User";
-import { PostModel } from "../../intefaces/Pots";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/appState";
+import {UserModel} from "../../intefaces/User";
+import {PostModel} from "../../intefaces/Pots";
 import apiClient from "../../services/apiClient";
 
 const HomePage = () => {

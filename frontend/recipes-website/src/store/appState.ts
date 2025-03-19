@@ -1,7 +1,7 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // Defaults to localStorage
+import storage from "redux-persist/lib/storage";
 import { PostModel } from "../intefaces/Pots";
 import { UserModel } from "../intefaces/User";
 
@@ -25,10 +25,10 @@ const appStateSlice = createSlice({
       state.user = action.payload;
     },
     setPosts: (state, action) => {
-      state.posts = action.payload; // Replace all posts
+      state.posts = action.payload;
     },
     addPosts: (state, action) => {
-      state.posts = [...state.posts, ...action.payload]; // Append new posts
+      state.posts = [...state.posts, ...action.payload];
     },
     updatePost: (state, action) => {
       const { postId, updatedPost } = action.payload;
@@ -41,7 +41,6 @@ const appStateSlice = createSlice({
       if (state.user) {
         const { postId, updatedPost } = action.payload;
 
-        // Update the specific post in the user.posts array
         state.user.posts = (state.user.posts ?? []).map((post) =>
           post._id === postId ? updatedPost : post
         );

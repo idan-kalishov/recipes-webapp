@@ -26,7 +26,7 @@ import {RootState} from "../../store/appState";
 const AddRecipePage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {postId} = useParams<{ postId?: string }>(); // Extract postId from URL
+    const {postId} = useParams<{ postId?: string }>();
 
     // Retrieve posts from the Redux store
     const posts = useSelector((state: RootState) => state.appState.posts);
