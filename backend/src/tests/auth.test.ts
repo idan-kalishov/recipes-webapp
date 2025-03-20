@@ -55,7 +55,9 @@ describe("Auth Tests", () => {
         expect(response.statusCode).toBe(200);
 
         const cookies = response.headers["set-cookie"];
-        expect(cookies).toBeDefined();
+        if (!Array.isArray(cookies)) {
+            throw new Error("Expected Set-Cookie header to be an array");
+        }        expect(cookies).toBeDefined();
         // Optionally, you can inspect each cookie
         const accessTokenCookie = cookies.find((cookie) =>
             cookie.startsWith("accessToken=")
@@ -109,6 +111,9 @@ describe("Auth Tests", () => {
         expect(response.statusCode).toBe(200);
 
         const cookies = response.headers["set-cookie"];
+        if (!Array.isArray(cookies)) {
+            throw new Error("Expected Set-Cookie header to be an array");
+        }
         expect(cookies).toBeDefined();
         // Optionally, you can inspect each cookie
         const accessTokenCookie = cookies.find((cookie) =>
@@ -132,6 +137,9 @@ describe("Auth Tests", () => {
         expect(response.statusCode).toBe(200);
 
         const cookies = response.headers["set-cookie"];
+        if (!Array.isArray(cookies)) {
+            throw new Error("Expected Set-Cookie header to be an array");
+        }
         const refreshTokenNew = cookies.find((cookie) =>
             cookie.startsWith("refreshToken=")
         );

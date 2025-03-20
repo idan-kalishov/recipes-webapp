@@ -3,7 +3,6 @@ import { Alert, Button, Snackbar, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import defaultPic from "../assets/no-profile.png";
-import { SERVER_BASE_URL } from "../config";
 import apiClient from "../services/apiClient";
 import { setUser } from "../store/appState";
 
@@ -87,7 +86,7 @@ const UserDetails: React.FC<UserDetailsProps> = ({
           src={
             newProfilePicPreview ||
             (user?.profilePicture &&
-              `${SERVER_BASE_URL ?? "http://localhost:3000"}/${user.profilePicture}`) ||
+              `${import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000"}/${user.profilePicture}`) ||
             defaultPic
           }
           className="w-80 h-80 z-10 rounded-full object-cover border-4 border-white shadow-lg"

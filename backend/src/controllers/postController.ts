@@ -210,7 +210,7 @@ const getUserPosts = async (req: Request, res: Response): Promise<void> => {
       .populate("owner", "userName")
       .populate("likes", "userName");
 
-    if (!posts || posts.length === 0) {
+    if (!posts) {
       res.status(404).json({ message: "No posts found for this user" });
       return;
     }

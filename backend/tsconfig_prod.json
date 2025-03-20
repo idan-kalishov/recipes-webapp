@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES6",
+    "outDir": "./dist",
     "module": "commonjs",
-    "outDir": "./dist", 
-    "rootDir": "./src", 
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types", "src/types"],
     "types": ["express", "jest"]
   },
-  "include": ["src/**/*"], 
-  "exclude": ["node_modules", "dist", "src/test"] 
+  "include": ["./*.ts", "src/index.ts", "src", "types"],
+  "exclude": ["node_modules", "./src/test"]
 }

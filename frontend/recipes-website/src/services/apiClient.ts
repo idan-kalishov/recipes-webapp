@@ -1,8 +1,9 @@
 import axios from "axios";
-import { SERVER_BASE_URL } from "../config";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 const apiClient = axios.create({
-  baseURL: `${SERVER_BASE_URL}`, // TODO REPLACE WITH COLMAN
+  baseURL: `${BACKEND_URL}`,
   withCredentials: true,
 });
 
@@ -15,7 +16,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await axios.post(`${SERVER_BASE_URL}/auth/refresh`, null, {
+        await axios.post(`${BACKEND_URL}/auth/refresh`, null, {
           withCredentials: true,
         });
         return apiClient(originalRequest);

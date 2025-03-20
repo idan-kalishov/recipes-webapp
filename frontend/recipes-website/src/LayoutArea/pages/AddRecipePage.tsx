@@ -14,6 +14,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {readFileAsBase64} from "../../utils/imageReader";
 import IconButton from "@mui/material/IconButton";
 import {Delete} from "@mui/icons-material";
+import placeHolder from "../../assets/placeholder_recipe.jpg";
+
 import {useDispatch, useSelector} from "react-redux";
 import {
     addPosts,
@@ -113,7 +115,6 @@ const AddRecipePage = () => {
                 response = await apiClient.post("/posts", formData, {
                     headers: {"Content-Type": "multipart/form-data"},
                 });
-                console.log(response.data);
 
                 dispatch(addPosts([response.data]));
                 dispatch(updateUserPosts([response.data]));
@@ -165,7 +166,7 @@ const AddRecipePage = () => {
 
                         <TextField
                             id="filled-basic"
-                            label="Content"
+                            label="steps & ingredients"
                             variant="filled"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
@@ -217,7 +218,7 @@ const AddRecipePage = () => {
                             ) : (
                                 <div>
                                     <img
-                                        src="/src/assets/placeholder_recipe.jpg"
+                                        src={placeHolder}
                                         alt="Placeholder"
                                         style={{width: "100%", opacity: 0.9}}
                                     />

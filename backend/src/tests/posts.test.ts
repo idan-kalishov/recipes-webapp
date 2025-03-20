@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
-import { Application } from "express";
+import { Application } from 'express';
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
-import request from "supertest";
-import Post from "../models/Post";
+import mongoose from 'mongoose';
+import request from 'supertest';
+import Post from '../models/Post';
 import { createServer } from "../server";
 
 dotenv.config();

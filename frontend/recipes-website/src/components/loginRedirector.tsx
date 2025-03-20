@@ -13,7 +13,6 @@ const LoginRedirector = () => {
     useEffect(() => {
         const verifyAuth = async () => {
             try {
-                console.log("here");
                 const queryParams = queryString.parse(location.search);
 
                 if (Object.keys(queryParams).length > 0) {
@@ -53,7 +52,6 @@ const LoginRedirector = () => {
         };
 
         if (location.pathname === "/verify-auth") {
-            console.log("verify");
             verifyAuth();
         } else {
             navigate("/login", {replace: true});

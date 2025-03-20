@@ -58,7 +58,7 @@ type tTokens = {
   refreshToken: string;
 };
 
-const generateToken = (userId: string): tTokens | null => {
+export const generateToken = (userId: string): tTokens | null => {
   if (!process.env.TOKEN_SECRET) {
     return null;
   }

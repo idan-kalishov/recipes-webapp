@@ -19,8 +19,8 @@ const UserPosts = ({ user, editMode }: UserPostsProps) => {
     try {
       const response = await apiClient.get(`/posts/user/${user._id}`);
       setUserPosts(response.data);
-    } catch (error) {
-      console.error("Error fetching user posts:", error);
+    } catch (error: any) {
+      console.error("Error fetching user posts:", error?.data?.message);
     } finally {
       setLoading(false);
     }
