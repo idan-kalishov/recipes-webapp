@@ -1,17 +1,6 @@
-import React, { useState } from "react";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
-import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import {
   Alert,
   Box,
@@ -20,8 +9,17 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
+import Collapse from "@mui/material/Collapse";
 import { red } from "@mui/material/colors";
-import { SERVER_BASE_URL } from "../config";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
 import { PostModel } from "../intefaces/Pots";
 import apiClient from "../services/apiClient";
 
@@ -52,10 +50,8 @@ const Post: React.FC<PostProps> = ({
   >();
 
   const handleCommentsToggle = (e: React.MouseEvent) => {
-    console.log("here1");
     e.stopPropagation();
     setExpandedComments((prev) => !prev);
-    console.log("here");
   };
 
   const handleCommentSubmit = async () => {
@@ -144,8 +140,6 @@ const Post: React.FC<PostProps> = ({
   };
 
   const isLiked = post.likes.some(({ _id }) => _id === currentUserId) || false;
-  console.log(post);
-  console.log(post + " " + post.owner._id + " " + currentUserId);
 
   return (
     <Card
@@ -188,7 +182,7 @@ const Post: React.FC<PostProps> = ({
           height: 200,
           objectFit: "contain",
         }}
-        image={`${SERVER_BASE_URL ?? "http://localhost:3000"}${post.imageUrl}`}
+        image={`${import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000"}${post.imageUrl}`}
         alt={post.title}
       />
       <CardContent>
@@ -208,12 +202,6 @@ const Post: React.FC<PostProps> = ({
           <ChatBubbleOutlineIcon />
         </IconButton>
         <Typography variant="body2">{post.comments.length}</Typography>
-        <IconButton
-          aria-label="share"
-          onClick={() => handleShareClick(post._id)}
-        >
-          <ShareIcon />
-        </IconButton>
       </CardActions>
       <Collapse in={expandedComments} timeout="auto" unmountOnExit>
         <CardContent>

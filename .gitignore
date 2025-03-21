@@ -588,8 +588,18 @@ FodyWeavers.xsd
 
 # Backend-specific ignores (if needed)
 backend/.env
+backend/.env_dev
+backend/.env_prod
+backend/client-cert.pem
+backend/client-key.pem
+backend/client.csr
+
+
 backend/dist/
 
 # Frontend-specific ignores (if needed)
 frontend/.env
 frontend/build/
+frontend/recipes-website/.env.development
+frontend/recipes-website/.env.production
+frontend/recipes-website/client.csr

@@ -127,13 +127,12 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
         "name"
       ) as HTMLInputElement;
 
-      const response = await axios.post("http://localhost:3000/auth/register", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, {
         email: email.value,
         password: password.value,
         userName: name.value,
       });
 
-      console.log("User registered:", response.data);
       setSnackbarMessage("Registration successful!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -147,7 +146,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
         );
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
-        console.log("finished here");
       } else {
         console.error("Unexpected Error:", err);
         setSnackbarMessage("An unexpected error occurred.");

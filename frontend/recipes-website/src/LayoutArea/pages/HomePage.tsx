@@ -59,7 +59,7 @@ const HomePage = () => {
         ) : (
           <>
             <Grid container spacing={2}>
-              {posts.map((post) => (
+              {posts?.map((post) => (
                 <Grid item xs={12} sm={6} md={4} key={post._id}>
                   <Post
                     post={post}

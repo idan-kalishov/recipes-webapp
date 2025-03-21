@@ -1,75 +1,41 @@
-import { createServer } from "./server"; // adjust the path accordingly
+import { createServer } from "./server";
+import https from "https";
+import http from "http"; // For HTTP redirection
+import fs from "fs";
+const path = require("path");
+
+// Paths to SSL certificate files
+const keyPath = path.resolve(__dirname, "../client-key.pem");
+const certPath = path.resolve(__dirname, "../client-cert.pem");
 
 const app = createServer();
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
 
-//   console.log("calling the init"); // Debug log
+// Define ports
+const HTTP_PORT = 80; // HTTP port for redirection
+const HTTPS_PORT = 443; // HTTPS port
 
-//   // Initialize Passport
-//   initializePassport(); // This should call the function
-//   app.use(passport.initialize());
-//   app.use(cookieParser());
+if (process.env.NODE_ENV !== "production") {
+  // Development mode: Use HTTP
+  app.listen(3000, () => {
+    console.log(`Development server running on http://localhost:3000`);
+  });
+} else {
+  // Production mode: Use HTTPS
+  const options = {
+    key: fs.readFileSync(keyPath),
+    cert: fs.readFileSync(certPath),
+  };
 
-//   app.use(
-//     cors({
-//       origin: "*",
-//     })
-//   );
+  // Start HTTPS server
+  https.createServer(options, app).listen(HTTPS_PORT, () => {
+    console.log(`Production server running on https://node32.cs.colman.ac.il`);
+  });
 
-//   // Middleware to parse JSON bodies
-//   app.use(express.json());
-//   app.use(bodyParser.json());
-
-//   // Routes
-//   app.use("/auth", authRouter); // Routes that use Passport
-//   app.use("/comments", commentsRouter);
-//   app.use("/posts", postRoutes);
-
-//   // MongoDB connection
-//   try {
-//     await mongoose.connect(process.env.DB_CONNECT as string);
-//     console.log("Connected to the database");
-//     console.log("hi");
-//   } catch (err) {
-//     console.error("MongoDB connection error:", err);
-//     throw err; // Throw the error to handle it in tests or calling functions
-//   }
-
-//   return app;
-// };
-
-// // Start the server only when running this file directly
-// if (require.main === module) {
-//   const PORT = process.env.PORT || 3000;
-//   initApp()
-//     .then((app) =>
-//       app.listen(PORT, () =>
-//         console.log(`Server running on http://loclhost:${PORT}`)
-//       )
-//     )
-//     .catch((err) => {
-//       console.error("Failed to start the server:", err);
-//       process.exit(1); // Exit with failure code
-//     });
-// }
-
-// // Export initApp and explicitly call it when imported
-// export default initApp;
-
-// // Explicitly call initApp when this file is imported
-// if (process.env.NODE_ENV === "test") {
-//   const PORT = process.env.PORT || 3000;
-//   initApp()
-//     .then((app) =>
-//       app.listen(PORT, () =>
-//         console.log(`Server running on http://localhost:${PORT}`)
-//       )
-//     )
-//     .catch((err) => {
-//       console.error("Failed to start the server:", err);
-//       process.exit(1); // Exit with failure code
-//     });
-// }
+  // Redirect HTTP to HTTPS
+  http.createServer((req, res) => {
+    res.writeHead(301, { Location: `https://node32.cs.colman.ac.il${req.url}` });
+    res.end();
+  }).listen(HTTP_PORT, () => {
+    console.log(`HTTP redirection server running on http://node32.cs.colman.ac.il`);
+  });
+}

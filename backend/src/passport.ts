@@ -8,7 +8,7 @@ const initializePassport = () => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID!,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        callbackURL: process.env.REDIRECT_URI_LOCAL!,
+        callbackURL: process.env.REDIRECT_URI_PRODUCTION!,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -34,7 +34,12 @@ const initializePassport = () => {
 
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await userModel.findById(id);
+      const user = await userModel.findById(id).select({
+        email: 1,
+        userName: 1,
+        profilePicture: 1,
+        googleId: 1,
+      });
       done(null, user);
     } catch (err) {
       done(err, null);

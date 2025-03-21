@@ -52,13 +52,6 @@ const NavBar: React.FC = () => {
               Generator ⚡
             </button>
 
-            <button
-              onClick={() => navigate("/liked-posts")}
-              className="text-gray-700 flex items-center gap-1 text-2xl hover:text-red-500 transition-colors cursor-pointer"
-              style={{ fontFamily: "Bebas Neue, cursive" }}
-            >
-              Favorites ❤️
-            </button>
           </div>
         </div>
 

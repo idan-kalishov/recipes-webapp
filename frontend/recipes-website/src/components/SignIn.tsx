@@ -12,12 +12,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "../Routing/routes";
 import AppTheme from "../shared-theme/AppTheme";
 import { GoogleIcon } from "./CustomeIcons";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, setUser } from "../store/appState";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -89,16 +88,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         "password"
       ) as HTMLInputElement;
       const apiClient = axios.create({
-        baseURL: "http://localhost:3000",
+        baseURL: import.meta.env.VITE_BACKEND_URL,
         withCredentials: true,
       });
-      await apiClient.post("http://localhost:3000/auth/login", {
+      await apiClient.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
         email: email.value,
         password: password.value,
       });
 
-      // const user = useSelector((state: RootState) => state.appState.user);
-      // console.log(user);
       setSnackbarMessage("Login successful!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
@@ -112,7 +109,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         setSnackbarOpen(true);
       } else {
         setSnackbarMessage("An unexpected error occurred.");
-        console.log(err);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
@@ -217,7 +213,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               fullWidth
               variant="outlined"
               onClick={() =>
-                (window.location.href = "http://localhost:3000/auth/google")
+                (window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/google`)
               }
               startIcon={<GoogleIcon />}
             >
