@@ -50,7 +50,7 @@ const UserPosts = ({ user, editMode }: UserPostsProps) => {
               <div key={post._id} className="bg-white rounded-lg shadow-md p-4">
                 <Post
                   post={post}
-                  currentUserId={post.owner}
+                  currentUserId={user._id ?? ""}
                   refreshData={fetchUserPosts}
                   isEditMode={editMode}
                   onClick={() => {
