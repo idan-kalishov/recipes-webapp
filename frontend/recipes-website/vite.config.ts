@@ -6,14 +6,6 @@ import path from "path";
 export default defineConfig({
   plugins: [react(), ...tailwindcss()] as PluginOption[],
 
-  server: {
-    https: {
-      key: path.resolve(__dirname, "client-key.pem"),
-      cert: path.resolve(__dirname, "client-cert.pem"),
-    },
-    port: 443,
-  },
-
   build: {
     rollupOptions: {
       output: {
