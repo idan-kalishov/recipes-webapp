@@ -26,16 +26,12 @@ const userRouter = express.Router();
  *       properties:
  *         userName:
  *           type: string
- *           description: The new username
- *         email:
- *           type: string
- *           description: The new email
+ *           description: The new username (optional)
  *         profilePicture:
  *           type: string
  *           format: binary
- *           description: The new profile picture
- *       required:
- *         - userName
+ *           description: The new profile picture (file upload, optional)
+ *       required: []
  *     UpdateUserResponse:
  *       type: object
  *       properties:
@@ -44,17 +40,20 @@ const userRouter = express.Router();
  *           description: Success message
  *         profilePicture:
  *           type: string
- *           description: URL of the updated profile picture
+ *           description: URL of the updated profile picture (if updated)
+ *         userName:
+ *           type: string
+ *           description: Updated username (if updated)
  *       required:
  *         - message
  */
 
 /**
  * @swagger
- * /users/update-user:
+ * /user/update-user:
  *   put:
- *     summary: Update user details (including profile picture)
- *     description: Update user details such as username, email, and profile picture
+ *     summary: Update user details (username or profile picture)
+ *     description: Update either the username or the profile picture (or both). At least one field must be provided.
  *     tags:
  *       - Users
  *     security:
@@ -72,7 +71,7 @@ const userRouter = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/UpdateUserResponse'
  *       400:
- *         description: Invalid input
+ *         description: Invalid input (no fields provided)
  *         content:
  *           application/json:
  *             schema:
