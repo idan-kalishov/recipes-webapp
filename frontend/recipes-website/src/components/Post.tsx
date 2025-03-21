@@ -9,6 +9,7 @@ import {
   Snackbar,
   TextField,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -22,6 +23,7 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { PostModel } from "../intefaces/Pots";
 import apiClient from "../services/apiClient";
+import {styled} from "@mui/material/styles";
 
 // Define the props that our Post component will receive.
 interface PostProps {
@@ -33,6 +35,19 @@ interface PostProps {
   onClick?: () => void;
 }
 
+
+const ExpandMore = styled((props: { expand: boolean; onClick: () => void }) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  marginLeft: "auto",
+  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
+  transition: theme.transitions.create("transform", {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
+
+
 const Post: React.FC<PostProps> = ({
   post,
   currentUserId,
@@ -42,6 +57,7 @@ const Post: React.FC<PostProps> = ({
   refreshData,
 }) => {
   const [expandedComments, setExpandedComments] = useState(false);
+  const [expandedRecipe, setExpandedRecipe] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -52,6 +68,11 @@ const Post: React.FC<PostProps> = ({
   const handleCommentsToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setExpandedComments((prev) => !prev);
+  };
+
+  const handleRecipeToggle = (e: React.MouseEvent) => {
+    e.stopPropagation(); // אם צריך למנוע bubble
+    setExpandedRecipe((prev) => !prev);
   };
 
   const handleCommentSubmit = async () => {
@@ -72,19 +93,6 @@ const Post: React.FC<PostProps> = ({
         setSnackbarSeverity("error"); // Set severity to error
         setSnackbarOpen(true);
       }
-    }
-  };
-
-  const handleShareClick = async (id: string) => {
-    try {
-      const postUrl = `${window.location.origin}/posts/${id}`;
-      await navigator.clipboard.writeText(postUrl);
-      setSnackbarMessage("Link copied to clipboard!");
-      setSnackbarOpen(true);
-    } catch (error) {
-      setSnackbarMessage("Failed to copy link.");
-      setSnackbarOpen(true);
-      console.error(error);
     }
   };
 
@@ -147,6 +155,8 @@ const Post: React.FC<PostProps> = ({
         width: "100%",
         maxWidth: "100%",
         margin: "auto",
+        display: "flex",
+        flexDirection: "column",
         mb: 2,
         cursor: isEditMode ? "pointer" : "default",
         transition: "transform 0.2s, box-shadow 0.2s",
@@ -179,19 +189,26 @@ const Post: React.FC<PostProps> = ({
         component="img"
         sx={{
           width: "100%",
-          height: 200,
+          height: "600px",
           objectFit: "contain",
         }}
         image={`${import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000"}${post.imageUrl}`}
         alt={post.title}
       />
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {post.content}
-        </Typography>
+
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton
+        <ExpandMore
+            expand={expandedRecipe}
+            onClick={handleRecipeToggle}
+            aria-expanded={expandedRecipe}
+            aria-label="show recipe"
+        >
+          <ExpandMoreIcon />
+        </ExpandMore>
+
+      <IconButton
           aria-label="add to favorites"
           onClick={() => handleToggleFavorite(post._id, isLiked)}
         >
@@ -203,6 +220,19 @@ const Post: React.FC<PostProps> = ({
         </IconButton>
         <Typography variant="body2">{post.comments.length}</Typography>
       </CardActions>
+      <Collapse in={expandedRecipe} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ whiteSpace: "pre-line" }}
+          >
+            <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: "pre-line" }}>
+              {post.content}
+            </Typography>
+          </Typography>
+        </CardContent>
+      </Collapse>
       <Collapse in={expandedComments} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography variant="subtitle1" gutterBottom>
@@ -255,6 +285,7 @@ const Post: React.FC<PostProps> = ({
             <Typography variant="body2" color="text.secondary">
               No comments yet.
             </Typography>
+
           )}
           <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
             <TextField
@@ -271,6 +302,7 @@ const Post: React.FC<PostProps> = ({
           </Box>
         </CardContent>
       </Collapse>
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
