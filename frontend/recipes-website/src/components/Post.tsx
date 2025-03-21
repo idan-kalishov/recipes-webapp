@@ -70,8 +70,7 @@ const Post: React.FC<PostProps> = ({
     setExpandedComments((prev) => !prev);
   };
 
-  const handleRecipeToggle = (e: React.MouseEvent) => {
-    e.stopPropagation(); // אם צריך למנוע bubble
+  const handleRecipeToggle = () => {
     setExpandedRecipe((prev) => !prev);
   };
 
@@ -199,14 +198,13 @@ const Post: React.FC<PostProps> = ({
 
       </CardContent>
       <CardActions disableSpacing>
-        <ExpandMore
-            expand={expandedRecipe}
-            onClick={handleRecipeToggle}
-            aria-expanded={expandedRecipe}
-            aria-label="show recipe"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
+      <IconButton
+        onClick={handleRecipeToggle} 
+        aria-expanded={expandedRecipe} 
+        aria-label="show recipe"
+      >
+        <ExpandMoreIcon />
+      </IconButton>
 
       <IconButton
           aria-label="add to favorites"
